@@ -30,7 +30,8 @@ class GameCharacter {
       isGoingLeft: false,
       isFalling: false,
       isTouchingGround: false,
-      isAttacking: false
+      isAttacking: false,
+      isBeingHitted: false
     };
   }
 

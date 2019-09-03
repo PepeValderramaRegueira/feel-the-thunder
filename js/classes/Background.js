@@ -4,7 +4,7 @@ class Background {
     this.w = w;
     this.h = h;
     this.background = new Image()
-    this.background.src = './assets/background-1.jpg'
+    this.background.src = './assets/background.png'
     this.background.onload = () => {
       this.ctx.drawImage(this.background, this.w, this.h);
     }

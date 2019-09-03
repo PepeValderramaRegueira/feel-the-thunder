@@ -18,9 +18,9 @@ class FeelTheThunder {
 
     // Array for the enemies
     this.enemies = [
-      new Enemy(ctx, 75, 100, 300, 200, this.w, this.h, "#00FF00", 30),
-      new Enemy(ctx, 75, 100, 600, 200, this.w, this.h, "#00FF00", 30),
-      new Enemy(ctx, 75, 100, 900, 200, this.w, this.h, "#00FF00", 30)
+      new Elf(ctx, 75, 100, 300, 200, this.w, this.h, "#0FFFF0", 30),
+      new Troll(ctx, 100, 150, 600, 200, this.w, this.h, "#00FF00", 150),
+      new Elf(ctx, 75, 100, 900, 200, this.w, this.h, "#0FFFF0", 30)
     ];
 
     // Background
@@ -62,9 +62,9 @@ class FeelTheThunder {
         console.log(enemy.x, this.thor.mouseX);
 
         if (
-          this.thor.mouseX > enemy.x &&
-          this.thor.mouseX < enemy.x + enemy.w &&
-          this.thor.mouseY > enemy.y
+          this.thor.mouseX >= enemy.x &&
+          this.thor.mouseX <= enemy.x + enemy.w &&
+          this.thor.mouseY >= enemy.y
         ) {
           enemy.life -= this.thor.attacks.throwLighning;
 
@@ -138,9 +138,19 @@ class FeelTheThunder {
 
       if (this.counter % 2000 === 0) {
         this.enemies.push(
-          new Enemy(this.ctx, 75, 100, Math.floor(Math.random() * this.w), 0, this.w, this.h, "#00FF00", 30)
-        )
-      } 
+          new Enemy(
+            this.ctx,
+            75,
+            100,
+            Math.floor(Math.random() * this.w),
+            0,
+            this.w,
+            this.h,
+            "#00FF00",
+            30
+          )
+        );
+      }
 
       if (this.counter >= 2000) this.counter = 0;
     }, 1000 / this.fps);
@@ -154,9 +164,18 @@ class FeelTheThunder {
           this.thor.hammer.x >= enemy.x &&
           this.thor.hammer.x <= enemy.x + enemy.w
         ) {
-          enemy.life -= this.thor.attacks.hammer;
 
-          if (enemy.life <= 0) this.enemies.splice(idx, 1);
+          // Makes the hammer hits once (1)
+          if (!enemy.states.isBeingHitted) {
+            enemy.life -= this.thor.attacks.hammer;
+            if (enemy.life <= 0) this.enemies.splice(idx, 1);
+          }
+
+          // Makes the hammer hits once (2)
+          enemy.states.isBeingHitted = true;
+        } else {
+          // Makes the hammers hits once (3)
+          enemy.states.isBeingHitted = false;
         }
 
         enemy.draw();

@@ -1,6 +1,7 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const w = window.innerWidth;
+// const w = window.innerWidth;
+const w = 1600;
 const h = 800;
 
 canvas.setAttribute("width", w);
