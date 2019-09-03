@@ -5,13 +5,17 @@ class Thor extends GameCharacter {
     this.points = 0;
     this.powerPoints = 8;
     this.jumpHeight = 30;
-    this.hammer = undefined
+    this.hammer = undefined;
+    this.radiusAttack = 200
+    this.mouseX = undefined
+    this.mouseY = undefined
 
     this.attacks = {
       // Attacks that Thor can perform
       hammer: 25,
       throwHammer: 25,
-      throwLighning: 50,
+      radio: 50,
+      throwLighning: 75,
       feelTheThunder: 500
     };
 
@@ -33,8 +37,9 @@ class Thor extends GameCharacter {
       jump: 32,
       attack: 81,
       throwHummer: 49,
-      throwLighning: 50,
-      feelTheThunder: 51
+      radio: 50,
+      throwLighning: 51,
+      feelTheThunder: 52
     };
 
     // Image
@@ -82,10 +87,24 @@ class Thor extends GameCharacter {
         }, 500);
       }
 
-      if (e.keyCode === this.keys.throwHummer && !this.states.isThrowingHammer && this.powerPoints >= 4) {
+      if (e.keyCode === this.keys.attack) {
+        this.states.isAttacking = true;
+        this.attack();
+      }
+
+      if (
+        e.keyCode === this.keys.throwHummer &&
+        !this.states.isThrowingHammer &&
+        this.powerPoints >= 4
+      ) {
         this.states.isThrowingHammer = true;
         this.powerPoints -= 4;
-        this.hammer = new Hammer(this.ctx, this.x, this.bgH - 20 - (this.h / 2), this.bgW)
+        this.hammer = new Hammer(
+          this.ctx,
+          this.x,
+          this.bgH - 20 - this.h / 2,
+          this.bgW
+        );
       }
     });
 
@@ -140,6 +159,10 @@ class Thor extends GameCharacter {
     }
   }
 
+  attack() {
+    
+  }
+
   isMoving() {
     // If Thor is not moving, reset the X speed
     if (!this.states.isMoving) {
@@ -148,19 +171,18 @@ class Thor extends GameCharacter {
   }
 
   draw() {
-    super.draw()
+    super.draw();
 
     if (this.states.isLookingRight && this.states.isThrowingHammer) {
-      if (this.states.isLookingRight) this.hammer.throw("right")
+      if (this.states.isLookingRight) this.hammer.throw("right");
     } else if (this.states.isLookingLeft && this.states.isThrowingHammer) {
-      this.hammer.throw("left", this.hammerSpeed)
+      this.hammer.throw("left", this.hammerSpeed);
     }
 
     if (this.states.isThrowingHammer) {
-
-      console.log(this.states.isThrowingHammer)
+      console.log(this.states.isThrowingHammer);
       if (this.states.isLookingRight) {
-        if (this.hammer.x <= this.x) this.states.isThrowingHammer = false
+        if (this.hammer.x <= this.x) this.states.isThrowingHammer = false;
       }
     }
   }

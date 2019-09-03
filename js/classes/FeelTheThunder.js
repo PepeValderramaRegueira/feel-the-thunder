@@ -8,11 +8,6 @@ class FeelTheThunder {
     this.h = h;
     this.h2 = h / 2;
 
-    this.time = {
-      start: null,
-      total: 2000
-    }
-
     // Game engine
     this.intervalID = undefined;
 
@@ -43,12 +38,91 @@ class FeelTheThunder {
     this.ctx.clearRect(0, 0, w, h);
   }
 
-  start() {
+  thorAttack() {
+    if (this.enemies.length > 0) {
+      this.enemies.forEach((enemy, idx) => {
+        if (
+          this.thor.x + this.thor.w >= enemy.x &&
+          this.thor.x <= enemy.x + enemy.w &&
+          this.thor.y >= enemy.y
+        ) {
+          enemy.life -= this.thor.attacks.hammer;
 
-    const test = now => {
-      requestAnimationFrame(test)
+          if (enemy.life <= 0) this.enemies.splice(idx, 1);
+        }
+      });
+    }
+  }
+
+  throwLighning() {
+
+    if (this.enemies.length > 0) {
+      this.enemies.forEach((enemy, idx) => {
+
+        console.log(enemy.x, this.thor.mouseX)
+
+        if (this.thor.mouseX > enemy.x && this.thor.mouseX < enemy.x + enemy.w && this.thor.mouseY > enemy.y) {
+          enemy.life -= this.thor.attacks.throwLighning
+
+          if (enemy.life <= 0) this.enemies.splice(idx, 1)
+        }
+        
+      })
     }
     
+  }
+
+  feelTheThunderAttack() {
+
+    if (this.enemies.length > 0) {
+
+      this.enemies = []
+      
+    }
+    
+  }
+
+  thorMakesRadio() {
+    if (this.enemies.length > 0) {
+      this.enemies.forEach((enemy, idx) => {
+        if (
+          enemy.x > this.thor.x - this.thor.radiusAttack - this.thor.w / 2 &&
+          enemy.x < this.thor.x + this.thor.radiusAttack + this.thor.w / 2
+        ) {
+          enemy.life -= this.thor.attacks.radio;
+
+          if (enemy.life <= 0) this.enemies.splice(idx, 1);
+        }
+      });
+    }
+  }
+
+  start() {
+    window.addEventListener('mousemove', e => {
+      this.thor.mouseX = e.clientX
+      this.thor.mouseY = e.clientY
+    })
+    
+    window.addEventListener("keydown", e => {
+      if (e.keyCode === this.thor.keys.attack) {
+        this.thor.states.isAttacking = true;
+        this.thorAttack();
+      }
+
+      if (e.keyCode === this.thor.keys.radio) {
+        this.thorMakesRadio();
+        console.log(window)
+      }
+
+      if (e.keyCode === this.thor.keys.feelTheThunder) {
+        this.feelTheThunderAttack()
+      }
+
+      if (e.keyCode === this.thor.keys.throwLighning) {
+        this.throwLighning()
+      }
+    });
+
     this.thor.handleKeyEvents();
 
     this.intervalID = setInterval(() => {
@@ -68,7 +142,7 @@ class FeelTheThunder {
           this.thor.hammer.x >= enemy.x &&
           this.thor.hammer.x <= enemy.x + enemy.w
         ) {
-          enemy.life -= this.thor.attacks.hammer
+          enemy.life -= this.thor.attacks.hammer;
 
           if (enemy.life <= 0) this.enemies.splice(idx, 1);
         }
