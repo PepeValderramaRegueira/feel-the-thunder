@@ -1,5 +1,5 @@
 class GameCharacter {
-  constructor(ctx, w, h, x, y, bgW, bgH, color) {
+  constructor(ctx, w, h, x, y, bgW, bgH, color, life) {
     this.ctx = ctx;
 
     // Dimensions
@@ -8,6 +8,7 @@ class GameCharacter {
     this.bgW = bgW;
     this.bgH = bgH;
     this.color = color
+    this.life = life
 
     // Positioning
     this.x = x;

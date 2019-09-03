@@ -1,15 +1,15 @@
 class Thor extends GameCharacter {
-  constructor(ctx, w, h, x, y, bgW, bgH, color) {
-    super(ctx, w, h, x, y, bgW, bgH, color);
+  constructor(ctx, w, h, x, y, bgW, bgH, color, life) {
+    super(ctx, w, h, x, y, bgW, bgH, color, life);
 
     this.points = 0;
-    this.powerPoints = 0;
+    this.powerPoints = 8;
     this.jumpHeight = 30;
     this.hammer = undefined
 
     this.attacks = {
       // Attacks that Thor can perform
-      hummer: 25,
+      hammer: 25,
       throwHammer: 25,
       throwLighning: 50,
       feelTheThunder: 500
@@ -82,8 +82,9 @@ class Thor extends GameCharacter {
         }, 500);
       }
 
-      if (e.keyCode === this.keys.throwHummer && !this.states.isThrowingHammer) {
+      if (e.keyCode === this.keys.throwHummer && !this.states.isThrowingHammer && this.powerPoints >= 4) {
         this.states.isThrowingHammer = true;
+        this.powerPoints -= 4;
         this.hammer = new Hammer(this.ctx, this.x, this.bgH - 20 - (this.h / 2), this.bgW)
       }
     });

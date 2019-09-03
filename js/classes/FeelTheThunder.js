@@ -8,6 +8,11 @@ class FeelTheThunder {
     this.h = h;
     this.h2 = h / 2;
 
+    this.time = {
+      start: null,
+      total: 2000
+    }
+
     // Game engine
     this.intervalID = undefined;
 
@@ -16,9 +21,9 @@ class FeelTheThunder {
 
     // Array for the enemies
     this.enemies = [
-      new Enemy(ctx, 75, 100, 300, 200, this.w, this.h, "#00FF00"),
-      new Enemy(ctx, 75, 100, 600, 200, this.w, this.h, "#00FF00"),
-      new Enemy(ctx, 75, 100, 900, 200, this.w, this.h, "#00FF00"),
+      new Enemy(ctx, 75, 100, 300, 200, this.w, this.h, "#00FF00", 30),
+      new Enemy(ctx, 75, 100, 600, 200, this.w, this.h, "#00FF00", 30),
+      new Enemy(ctx, 75, 100, 900, 200, this.w, this.h, "#00FF00", 30)
     ];
 
     // Background
@@ -29,7 +34,7 @@ class FeelTheThunder {
 
     // Main character of the game
     // this.thor = new Thor(ctx, 75, 100, 20, this.ground.groundY - 450 , this.w, this.h)
-    this.thor = new Thor(ctx, 75, 100, 20, 500, this.w, this.h, "#FF0000");
+    this.thor = new Thor(ctx, 75, 100, 20, 500, this.w, this.h, "#FF0000", 100);
 
     this.currentLevel = "level1";
   }
@@ -39,20 +44,37 @@ class FeelTheThunder {
   }
 
   start() {
+
+    const test = now => {
+      requestAnimationFrame(test)
+    }
+    
     this.thor.handleKeyEvents();
 
     this.intervalID = setInterval(() => {
       this.clearScreen();
       this.background.draw();
       this.ground.draw();
-      this.drawEnemies()
+      this.drawEnemies();
       this.thor.draw();
     }, 1000 / this.fps);
   }
 
   drawEnemies() {
-    this.enemies.forEach((enemy, idx) => {
-      enemy.draw();
-    });
+    if (this.enemies.length > 0) {
+      this.enemies.forEach((enemy, idx) => {
+        if (
+          this.thor.hammer &&
+          this.thor.hammer.x >= enemy.x &&
+          this.thor.hammer.x <= enemy.x + enemy.w
+        ) {
+          enemy.life -= this.thor.attacks.hammer
+
+          if (enemy.life <= 0) this.enemies.splice(idx, 1);
+        }
+
+        enemy.draw();
+      });
+    }
   }
 }
