@@ -8,6 +8,8 @@ class FeelTheThunder {
     this.h = h;
     this.h2 = h / 2;
 
+    this.counter = 0;
+
     // Game engine
     this.intervalID = undefined;
 
@@ -55,39 +57,39 @@ class FeelTheThunder {
   }
 
   throwLighning() {
-
     if (this.enemies.length > 0) {
       this.enemies.forEach((enemy, idx) => {
+        console.log(enemy.x, this.thor.mouseX);
 
-        console.log(enemy.x, this.thor.mouseX)
+        if (
+          this.thor.mouseX > enemy.x &&
+          this.thor.mouseX < enemy.x + enemy.w &&
+          this.thor.mouseY > enemy.y
+        ) {
+          enemy.life -= this.thor.attacks.throwLighning;
 
-        if (this.thor.mouseX > enemy.x && this.thor.mouseX < enemy.x + enemy.w && this.thor.mouseY > enemy.y) {
-          enemy.life -= this.thor.attacks.throwLighning
-
-          if (enemy.life <= 0) this.enemies.splice(idx, 1)
+          if (enemy.life <= 0) this.enemies.splice(idx, 1);
         }
-        
-      })
+      });
     }
-    
   }
 
   feelTheThunderAttack() {
-
     if (this.enemies.length > 0) {
-
-      this.enemies = []
-      
+      this.enemies = [];
     }
-    
   }
 
   thorMakesRadio() {
     if (this.enemies.length > 0) {
       this.enemies.forEach((enemy, idx) => {
         if (
-          enemy.x > this.thor.x - this.thor.radiusAttack - this.thor.w / 2 &&
-          enemy.x < this.thor.x + this.thor.radiusAttack + this.thor.w / 2
+          // enemy.x > this.thor.x - this.thor.radiusAttack - this.thor.w / 2 &&
+          // enemy.x < this.thor.x + this.thor.radiusAttack + this.thor.w / 2
+          (enemy.x > this.thor.x - this.thor.radiusAttack - this.thor.w / 2 &&
+            enemy.x < this.thor.x + this.thor.w) ||
+          (enemy.x < this.thor.x + this.thor.radiusAttack + this.thor.w / 2 &&
+            enemy.x > this.thor.x + this.thor.w)
         ) {
           enemy.life -= this.thor.attacks.radio;
 
@@ -98,11 +100,11 @@ class FeelTheThunder {
   }
 
   start() {
-    window.addEventListener('mousemove', e => {
-      this.thor.mouseX = e.clientX
-      this.thor.mouseY = e.clientY
-    })
-    
+    window.addEventListener("mousemove", e => {
+      this.thor.mouseX = e.clientX;
+      this.thor.mouseY = e.clientY;
+    });
+
     window.addEventListener("keydown", e => {
       if (e.keyCode === this.thor.keys.attack) {
         this.thor.states.isAttacking = true;
@@ -111,15 +113,15 @@ class FeelTheThunder {
 
       if (e.keyCode === this.thor.keys.radio) {
         this.thorMakesRadio();
-        console.log(window)
+        console.log(window);
       }
 
       if (e.keyCode === this.thor.keys.feelTheThunder) {
-        this.feelTheThunderAttack()
+        this.feelTheThunderAttack();
       }
 
       if (e.keyCode === this.thor.keys.throwLighning) {
-        this.throwLighning()
+        this.throwLighning();
       }
     });
 
@@ -131,6 +133,16 @@ class FeelTheThunder {
       this.ground.draw();
       this.drawEnemies();
       this.thor.draw();
+
+      this.counter++;
+
+      if (this.counter % 2000 === 0) {
+        this.enemies.push(
+          new Enemy(this.ctx, 75, 100, Math.floor(Math.random() * this.w), 0, this.w, this.h, "#00FF00", 30)
+        )
+      } 
+
+      if (this.counter >= 2000) this.counter = 0;
     }, 1000 / this.fps);
   }
 

@@ -67,17 +67,17 @@ class Thor extends GameCharacter {
 
   handleKeyEvents() {
     window.addEventListener("keydown", e => {
-      if (e.keyCode === this.keys.right) {
+      if (e.keyCode === this.keys.right && !this.states.isThrowingHammer) {
         this.states.isMoving = true;
         this.states.isGoingRight = true;
       }
 
-      if (e.keyCode === this.keys.left) {
+      if (e.keyCode === this.keys.left && !this.states.isThrowingHammer) {
         this.states.isMoving = true;
         this.states.isGoingLeft = true;
       }
 
-      if (e.keyCode === this.keys.jump && !this.states.isJumping) {
+      if (e.keyCode === this.keys.jump && !this.states.isJumping && !this.states.isThrowingHammer) {
         this.states.isJumping = true;
         this.states.isTouchingGround = false;
 
