@@ -100,6 +100,7 @@ class FeelTheThunder {
       this.clearScreen();
 
       this.framesCounter++;
+      this.thor.framesCounter++;
 
       if (this.framesCounter > 1000) this.framesCounter = 0;
 

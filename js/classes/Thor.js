@@ -2,6 +2,8 @@ class Thor extends GameCharacter {
   constructor(ctx, w, h, x, y, bgW, bgH, color, life) {
     super(ctx, w, h, x, y, bgW, bgH, color, life);
 
+    this.framesCounter = 0;
+
     this.enemiesKilled = 0;
     this.powerPoints = 0;
     this.jumpHeight = 30;
@@ -109,15 +111,19 @@ class Thor extends GameCharacter {
     this.animateGameCharacter(framesCounter);
 
     if (this.states.isLookingRight && this.states.isThrowingHammer) {
-      if (this.states.isLookingRight) this.hammer.throw("right");
+      if (this.states.isLookingRight) this.hammer.throw("right", this.framesCounter);
     } else if (this.states.isLookingLeft && this.states.isThrowingHammer) {
-      this.hammer.throw("left", this.hammerSpeed);
+      this.hammer.throw("left", this.framesCounter);
     }
 
     if (this.states.isThrowingHammer) {
       console.log(this.states.isThrowingHammer);
       if (this.states.isLookingRight) {
         if (this.hammer.x <= this.x) this.states.isThrowingHammer = false;
+      }
+
+      if (this.states.isLookingLeft) {
+        if (this.hammer.x >= this.x) this.states.isThrowingHammer = false;
       }
     }
   }
@@ -173,7 +179,7 @@ class Thor extends GameCharacter {
         this.hammer = new Hammer(
           this.ctx,
           this.x,
-          this.bgH - 20 - this.h / 2,
+          this.bgH - 40 - this.h / 2,
           this.bgW
         );
       }
