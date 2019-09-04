@@ -6,7 +6,7 @@ class Thor extends GameCharacter {
 
     this.enemiesKilled = 0;
     this.powerPoints = 0;
-    this.jumpHeight = 30;
+    this.jumpHeight = 40;
     this.hammer = undefined;
     this.radiusAttack = 200;
     this.mouseX = undefined;
@@ -74,7 +74,9 @@ class Thor extends GameCharacter {
   }
 
   draw(framesCounter) {
-    super.draw();
+    this.controller()
+
+    if (this.y >= this.bgH - this.h - 20) this.y = this.bgH - this.h - 20;
 
     if (!this.states.isMoving && !this.states.isJumping) {
       this.gameCharacter.frames = 1;
@@ -175,7 +177,7 @@ class Thor extends GameCharacter {
         setTimeout(() => {
           this.states.isJumping = false;
           this.states.isTouchingGround = true;
-        }, 500);
+        }, 600);
       }
 
       if (e.keyCode === this.keys.attack) {
@@ -285,7 +287,7 @@ class Thor extends GameCharacter {
     this.isMoving();
     this.isMovingRight();
     this.isMovingLeft();
-    this.isTouchingGround();
-    this.applyGravity();
+    super.isTouchingGround();
+    super.applyGravity();
   }
 }

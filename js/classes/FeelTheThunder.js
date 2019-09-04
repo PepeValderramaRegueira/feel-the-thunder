@@ -20,12 +20,12 @@ class FeelTheThunder {
 
     // Array for the enemies
     this.enemies = [
-      new Elf(ctx, 75, 200, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
-      new Troll(ctx, 200, 400, 600, 200, this.w, this.h, "#00FF00", 150, 50),
-      new Elf(ctx, 75, 200, 450, 200, this.w, this.h, "#0FFFF0", 30, 25),
-      new Elf(ctx, 75, 200, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
-      new Troll(ctx, 200, 400, 900, 200, this.w, this.h, "#00FF00", 150, 50),
-      new Elf(ctx, 75, 200, 450, 200, this.w, this.h, "#0FFFF0", 30, 25, 1)
+      // new Elf(ctx, 75, 200, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
+      // new Troll(ctx, 200, 400, 600, 200, this.w, this.h, "#00FF00", 150, 50),
+      // new Elf(ctx, 75, 200, 450, 200, this.w, this.h, "#0FFFF0", 30, 25),
+      // new Elf(ctx, 75, 200, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
+      // new Troll(ctx, 200, 400, 900, 200, this.w, this.h, "#00FF00", 150, 50),
+      // new Elf(ctx, 75, 200, 450, 200, this.w, this.h, "#0FFFF0", 30, 25, 1)
     ];
 
     // Background
@@ -112,18 +112,19 @@ class FeelTheThunder {
 
       this.counter++;
 
-      if (this.counter % 2000 === 0) {
+      if (this.counter % 150 === 0) {
         this.enemies.push(
-          new Enemy(
-            this.ctx,
+          new Elf(
+            ctx,
             75,
-            100,
+            200,
             Math.floor(Math.random() * this.w),
-            0,
+            200,
             this.w,
             this.h,
-            "#00FF00",
-            30
+            "#0FFFF0",
+            30,
+            25
           )
         );
       }
@@ -228,6 +229,29 @@ class FeelTheThunder {
           // Makes the hammers hits once (3)
           enemy.states.isBeingHitted = false;
         }
+
+        if (enemy.states.isLookingRight) {
+          if (
+              this.thor.x >= enemy.x &&
+              this.thor.x <= enemy.x + enemy.w &&
+              this.thor.y >= enemy.y
+            ) {
+            this.thor.life -= 0.2;
+          }
+        }
+
+        if (enemy.states.isLookingLeft) {
+          if (
+              this.thor.x >= enemy.x &&
+              this.thor.x <= enemy.x + enemy.w &&
+              this.thor.y >= enemy.y
+            ) {
+            this.thor.life -= 0.2;
+          }
+        }
+
+        console.log(this.thor.life);
+        if (this.thor.life <= 0) clearInterval(this.intervalID);
 
         enemy.draw();
       });

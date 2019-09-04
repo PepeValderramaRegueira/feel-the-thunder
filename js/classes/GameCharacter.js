@@ -15,7 +15,7 @@ class GameCharacter {
     this.y = y;
 
     // Movement
-    this.speedX = 10;
+    this.speedX = 2;
     this.speedY = 0;
 
     // Gravity
@@ -24,7 +24,7 @@ class GameCharacter {
 
     // Character's states
     this.states = {
-      isLookingRight: false,
+      isLookingRight: true,
       isGoingRight: false,
       isLookingLeft: false,
       isGoingLeft: false,
@@ -46,7 +46,22 @@ class GameCharacter {
 
   draw() {
     this.controller()
-    // if (this.y >= this.bgH - this.h - 20) this.y = this.bgH - this.h - 20;
+
+    if (this.x <= 0) {
+      this.speedX *= -1;
+      this.states.isLookingRight = true
+      this.states.isLookingLeft = false
+    }
+    else if (this.x >= this.bgW) {
+      this.speedX *= -1
+      this.states.isLookingRight = false
+      this.states.isLookingLeft = true
+    }
+
+    // console.log(this.states)
+
+    this.x += this.speedX
+
     if (this.y >= this.bgH - this.h - 20) this.y = this.bgH - this.h - 20;
     this.ctx.beginPath()
     this.ctx.rect(this.x, this.y, this.w, this.h)
