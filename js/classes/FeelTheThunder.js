@@ -20,9 +20,12 @@ class FeelTheThunder {
 
     // Array for the enemies
     this.enemies = [
-      new Elf(ctx, 75, 100, 300, 200, this.w, this.h, "#0FFFF0", 30),
-      new Troll(ctx, 100, 150, 600, 200, this.w, this.h, "#00FF00", 150),
-      new Elf(ctx, 75, 100, 900, 200, this.w, this.h, "#0FFFF0", 30)
+      new Elf(ctx, 75, 100, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
+      new Troll(ctx, 100, 150, 600, 200, this.w, this.h, "#00FF00", 150, 50),
+      new Elf(ctx, 75, 100, 900, 200, this.w, this.h, "#0FFFF0", 30, 25),
+      new Elf(ctx, 75, 100, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
+      new Troll(ctx, 100, 150, 600, 200, this.w, this.h, "#00FF00", 150, 50),
+      new Elf(ctx, 75, 100, 900, 200, this.w, this.h, "#0FFFF0", 30, 25, 1)
     ];
 
     // Background

@@ -10,8 +10,8 @@ class Thor extends GameCharacter {
     this.mouseX = undefined;
     this.mouseY = undefined;
 
+    // Attacks that Thor can perform
     this.attacks = {
-      // Attacks that Thor can perform
       hammer: 25, // No power points required
       throwHammer: 25, // 2 power points required
       radio: 50, // 3 power points required
@@ -19,6 +19,7 @@ class Thor extends GameCharacter {
       feelTheThunder: 500 // 5 power points required
     };
 
+    // Different states for Thor
     this.states = {
       isLookingRight: true,
       isGoingRight: false,
@@ -62,12 +63,12 @@ class Thor extends GameCharacter {
     return this.powerPoints;
   }
 
-  increaseScore() {
-    this.enemiesKilled++;
-  }
-
   increasePowerPoints() {
     this.powerPoints < 5 ? this.powerPoints++ : null;
+  }
+
+  increaseScore() {
+    this.enemiesKilled++;
   }
 
   draw(framesCounter) {
@@ -75,11 +76,10 @@ class Thor extends GameCharacter {
 
     if (!this.states.isMoving && !this.states.isJumping) {
       this.gameCharacter.frames = 1;
-
-      if (this.states.isLookingRight) this.gameCharacter.src = "./assets/thor-not-moving.png";
+      if (this.states.isLookingRight)
+        this.gameCharacter.src = "./assets/thor-not-moving.png";
       else this.gameCharacter.src = "./assets/thor-not-moving-reverse.png";
-    }
-    else if (this.states.isGoingRight && this.states.isTouchingGround) {
+    } else if (this.states.isGoingRight && this.states.isTouchingGround) {
       this.gameCharacter.frames = 5;
       this.gameCharacter.src = "./assets/thor-walking.png";
     } else if (!this.states.isTouchingGround && this.states.isLookingRight) {
