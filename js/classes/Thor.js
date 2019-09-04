@@ -95,6 +95,14 @@ class Thor extends GameCharacter {
       this.gameCharacter.src = "./assets/thor-walking-reverse.png";
     }
 
+    if (this.states.isThrowingHammer && this.states.isLookingRight) {
+      this.gameCharacter.frames = 1;
+      this.gameCharacter.src = "./assets/thor-waiting-hammer.png";
+    } else if (this.states.isThrowingHammer && this.states.isLookingLeft) {
+      this.gameCharacter.frames = 1;
+      this.gameCharacter.src = "./assets/thor-waiting-hammer-reverse.png";
+    }
+
     this.ctx.drawImage(
       this.gameCharacter,
       this.gameCharacter.frameIndex *
@@ -111,7 +119,8 @@ class Thor extends GameCharacter {
     this.animateGameCharacter(framesCounter);
 
     if (this.states.isLookingRight && this.states.isThrowingHammer) {
-      if (this.states.isLookingRight) this.hammer.throw("right", this.framesCounter);
+      if (this.states.isLookingRight)
+        this.hammer.throw("right", this.framesCounter);
     } else if (this.states.isLookingLeft && this.states.isThrowingHammer) {
       this.hammer.throw("left", this.framesCounter);
     }
@@ -179,7 +188,7 @@ class Thor extends GameCharacter {
         this.hammer = new Hammer(
           this.ctx,
           this.x,
-          this.bgH - 40 - this.h / 2,
+          this.bgH - 80 - this.h / 2,
           this.bgW
         );
       }

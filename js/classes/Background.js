@@ -4,9 +4,9 @@ class Background {
     this.w = w;
     this.h = h;
     this.background = new Image()
-    this.background.src = './assets/background.png'
+    // this.background.src = './assets/background.png'
     this.background.onload = () => {
-      this.ctx.drawImage(this.background, this.w, this.h);
+      // this.ctx.drawImage(this.background, this.w, this.h);
     }
   }
 

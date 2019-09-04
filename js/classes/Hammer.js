@@ -4,8 +4,8 @@ class Hammer {
     this.x = x;
     this.y = y;
     this.bgW = bgW;
-    this.w = 40;
-    this.h = 40;
+    this.w = 80;
+    this.h = 60;
     this.speedX = 15;
     this.img = new Image();
     this.img.src = "./assets/hammer.png";

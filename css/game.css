@@ -7,4 +7,9 @@
 canvas {
   margin: auto;
   display: block;
+  background-image: url('./../assets/background.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
 }

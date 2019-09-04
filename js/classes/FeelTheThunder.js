@@ -16,16 +16,16 @@ class FeelTheThunder {
     this.intervalID = undefined;
 
     // FPS
-    this.fps = 70;
+    this.fps = 60;
 
     // Array for the enemies
     this.enemies = [
-      new Elf(ctx, 75, 100, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
-      new Troll(ctx, 100, 150, 600, 200, this.w, this.h, "#00FF00", 150, 50),
-      new Elf(ctx, 75, 100, 900, 200, this.w, this.h, "#0FFFF0", 30, 25),
-      new Elf(ctx, 75, 100, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
-      new Troll(ctx, 100, 150, 600, 200, this.w, this.h, "#00FF00", 150, 50),
-      new Elf(ctx, 75, 100, 900, 200, this.w, this.h, "#0FFFF0", 30, 25, 1)
+      new Elf(ctx, 75, 200, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
+      new Troll(ctx, 200, 400, 600, 200, this.w, this.h, "#00FF00", 150, 50),
+      new Elf(ctx, 75, 200, 450, 200, this.w, this.h, "#0FFFF0", 30, 25),
+      new Elf(ctx, 75, 200, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
+      new Troll(ctx, 200, 400, 900, 200, this.w, this.h, "#00FF00", 150, 50),
+      new Elf(ctx, 75, 200, 450, 200, this.w, this.h, "#0FFFF0", 30, 25, 1)
     ];
 
     // Background
@@ -38,8 +38,8 @@ class FeelTheThunder {
     // this.thor = new Thor(ctx, 75, 100, 20, this.ground.groundY - 450 , this.w, this.h)
     this.thor = new Thor(
       ctx,
-      55,
-      100,
+      110, // 55
+      200, // 100
       20,
       500,
       this.w,
@@ -175,6 +175,8 @@ class FeelTheThunder {
 
   feelTheThunderAttack() {
     if (this.enemies.length > 0) {
+      this.thor.powerPoints = 5;
+      this.thor.enemiesKilled += this.enemies.length;
       this.enemies = [];
     }
   }
