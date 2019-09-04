@@ -2,8 +2,8 @@ class Thor extends GameCharacter {
   constructor(ctx, w, h, x, y, bgW, bgH, color, life) {
     super(ctx, w, h, x, y, bgW, bgH, color, life);
 
-    this.points = 0;
-    this.powerPoints = 8;
+    this.enemiesKilled = 0;
+    this.powerPoints = 0;
     this.jumpHeight = 30;
     this.hammer = undefined;
     this.radiusAttack = 200;
@@ -12,11 +12,11 @@ class Thor extends GameCharacter {
 
     this.attacks = {
       // Attacks that Thor can perform
-      hammer: 25,
-      throwHammer: 25,
-      radio: 50,
-      throwLighning: 75,
-      feelTheThunder: 500
+      hammer: 25, // No power points required
+      throwHammer: 25, // 2 power points required
+      radio: 50, // 3 power points required
+      throwLighning: 75, // 4 power points required
+      feelTheThunder: 500 // 5 power points required
     };
 
     this.states = {
@@ -28,7 +28,8 @@ class Thor extends GameCharacter {
       isAttacking: false,
       isThrowingHammer: false,
       isMoving: false,
-      isOverPlatform: false
+      isOverPlatform: false,
+      isTouchingGround: true
     };
 
     this.keys = {
@@ -54,22 +55,43 @@ class Thor extends GameCharacter {
     };
   }
 
-  // draw() {
-  //   this.controller();
+  get getStates() {
+    return this.states;
+  }
+  get getPowerPoints() {
+    return this.powerPoints;
+  }
 
-  //   if (this.y >= this.bgH - this.h - 20) this.y = this.bgH - this.h - 20;
+  increaseScore() {
+    this.enemiesKilled++;
+  }
 
-  //   this.ctx.beginPath();
-  //   // this.ctx.drawImage(this.gameCharacter, this.x, this.y);
-  //   // this.ctx.drawImage(this.gameCharacter, 10, 100, 75, 100, 50, 75, 75, 100);
-  //   this.ctx.rect(this.x, this.y, this.w, this.h);
-  //   this.ctx.fillStyle = "#FF0000";
-  //   this.ctx.fill();
-  //   this.ctx.closePath();
-  // }
+  increasePowerPoints() {
+    this.powerPoints < 5 ? this.powerPoints++ : null;
+  }
 
   draw(framesCounter) {
     super.draw();
+
+    if (!this.states.isMoving && !this.states.isJumping) {
+      this.gameCharacter.frames = 1;
+
+      if (this.states.isLookingRight) this.gameCharacter.src = "./assets/thor-not-moving.png";
+      else this.gameCharacter.src = "./assets/thor-not-moving-reverse.png";
+    }
+    else if (this.states.isGoingRight && this.states.isTouchingGround) {
+      this.gameCharacter.frames = 5;
+      this.gameCharacter.src = "./assets/thor-walking.png";
+    } else if (!this.states.isTouchingGround && this.states.isLookingRight) {
+      this.gameCharacter.frames = 1;
+      this.gameCharacter.src = "./assets/thor-jumping.png";
+    } else if (!this.states.isTouchingGround && this.states.isLookingLeft) {
+      this.gameCharacter.frames = 1;
+      this.gameCharacter.src = "./assets/thor-jumping-reverse.png";
+    } else if (this.states.isGoingLeft && this.isTouchingGround) {
+      this.gameCharacter.frames = 5;
+      this.gameCharacter.src = "./assets/thor-walking-reverse.png";
+    }
 
     this.ctx.drawImage(
       this.gameCharacter,
@@ -84,7 +106,7 @@ class Thor extends GameCharacter {
       this.h
     );
 
-    this.animateGameCharacter(framesCounter)
+    this.animateGameCharacter(framesCounter);
 
     if (this.states.isLookingRight && this.states.isThrowingHammer) {
       if (this.states.isLookingRight) this.hammer.throw("right");
@@ -103,13 +125,23 @@ class Thor extends GameCharacter {
   handleKeyEvents() {
     window.addEventListener("keydown", e => {
       if (e.keyCode === this.keys.right && !this.states.isThrowingHammer) {
+        this.states.isMoving = false;
+        this.states.isGoingLeft = false;
+        this.states.isLookingLeft = false;
+
         this.states.isMoving = true;
         this.states.isGoingRight = true;
+        this.states.isLookingRight = true;
       }
 
       if (e.keyCode === this.keys.left && !this.states.isThrowingHammer) {
+        this.states.isMoving = false;
+        this.states.isGoingRight = false;
+        this.states.isLookingRight = false;
+
         this.states.isMoving = true;
         this.states.isGoingLeft = true;
+        this.states.isLookingLeft = true;
       }
 
       if (
@@ -134,10 +166,10 @@ class Thor extends GameCharacter {
       if (
         e.keyCode === this.keys.throwHummer &&
         !this.states.isThrowingHammer &&
-        this.powerPoints >= 4
+        this.powerPoints >= 2
       ) {
         this.states.isThrowingHammer = true;
-        this.powerPoints -= 4;
+        this.powerPoints -= 2;
         this.hammer = new Hammer(
           this.ctx,
           this.x,
@@ -211,7 +243,8 @@ class Thor extends GameCharacter {
     if (framesCounter % 6 === 0) {
       this.gameCharacter.frameIndex += 1;
 
-      if (this.gameCharacter.frameIndex > this.gameCharacter.frames - 1) this.gameCharacter.frameIndex = 0
+      if (this.gameCharacter.frameIndex > this.gameCharacter.frames - 1)
+        this.gameCharacter.frameIndex = 0;
     }
   }
 

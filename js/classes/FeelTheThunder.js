@@ -8,7 +8,7 @@ class FeelTheThunder {
     this.h = h;
     this.h2 = h / 2;
 
-    this.framesCounter = 0
+    this.framesCounter = 0;
 
     this.counter = 0;
 
@@ -16,7 +16,7 @@ class FeelTheThunder {
     this.intervalID = undefined;
 
     // FPS
-    this.fps = 60;
+    this.fps = 70;
 
     // Array for the enemies
     this.enemies = [
@@ -33,13 +33,37 @@ class FeelTheThunder {
 
     // Main character of the game
     // this.thor = new Thor(ctx, 75, 100, 20, this.ground.groundY - 450 , this.w, this.h)
-    this.thor = new Thor(ctx, 55, 100, 20, 500, this.w, this.h, "#FF000000", 100);
+    this.thor = new Thor(
+      ctx,
+      55,
+      100,
+      20,
+      500,
+      this.w,
+      this.h,
+      "#FF000000",
+      100
+    );
 
     this.currentLevel = "level1";
   }
 
   clearScreen() {
     this.ctx.clearRect(0, 0, w, h);
+  }
+
+  drawThorInfo() {
+    this.ctx.beginPath();
+    this.ctx.font = "30px sans-serif";
+    this.ctx.fillStyle = "#000000";
+    this.ctx.fillText(`Power points: ${this.thor.getPowerPoints}`, 10, 50);
+    this.ctx.closePath();
+
+    this.ctx.beginPath();
+    this.ctx.font = "30px sans-serif";
+    this.ctx.fillStyle = "#000000";
+    this.ctx.fillText(`Enemies killed: ${this.thor.enemiesKilled}`, 10, 100);
+    this.ctx.closePath();
   }
 
   start() {
@@ -50,13 +74,12 @@ class FeelTheThunder {
 
     window.addEventListener("keydown", e => {
       if (e.keyCode === this.thor.keys.attack) {
-        this.thor.states.isAttacking = true;
+        this.thor.getStates.isAttacking = true;
         this.thorAttack();
       }
 
       if (e.keyCode === this.thor.keys.radio) {
         this.thorMakesRadio();
-        console.log(window);
       }
 
       if (e.keyCode === this.thor.keys.feelTheThunder) {
@@ -73,13 +96,14 @@ class FeelTheThunder {
     this.intervalID = setInterval(() => {
       this.clearScreen();
 
-      this.framesCounter++
+      this.framesCounter++;
 
-      if (this.framesCounter > 1000) this.framesCounter = 0
-      
+      if (this.framesCounter > 1000) this.framesCounter = 0;
+
       this.background.draw();
       this.ground.draw();
       this.drawEnemies();
+      this.drawThorInfo();
       this.thor.draw(this.framesCounter);
 
       this.counter++;
@@ -114,7 +138,11 @@ class FeelTheThunder {
         ) {
           enemy.life -= this.thor.attacks.hammer;
 
-          if (enemy.life <= 0) this.enemies.splice(idx, 1);
+          if (enemy.life <= 0) {
+            this.thor.increasePowerPoints();
+            this.thor.increaseScore();
+            this.enemies.splice(idx, 1);
+          }
         }
       });
     }
@@ -123,8 +151,6 @@ class FeelTheThunder {
   throwLighning() {
     if (this.enemies.length > 0) {
       this.enemies.forEach((enemy, idx) => {
-        console.log(enemy.x, this.thor.mouseX);
-
         if (
           this.thor.mouseX >= enemy.x &&
           this.thor.mouseX <= enemy.x + enemy.w &&
@@ -132,7 +158,12 @@ class FeelTheThunder {
         ) {
           enemy.life -= this.thor.attacks.throwLighning;
 
-          if (enemy.life <= 0) this.enemies.splice(idx, 1);
+          if (enemy.life <= 0) {
+            this.enemies.splice(idx, 1);
+            this.thor.points++;
+            this.thor.increasePowerPoints();
+            this.thor.increaseScore();
+          }
         }
       });
     }
@@ -157,7 +188,11 @@ class FeelTheThunder {
         ) {
           enemy.life -= this.thor.attacks.radio;
 
-          if (enemy.life <= 0) this.enemies.splice(idx, 1);
+          if (enemy.life <= 0) {
+            this.thor.increasePowerPoints();
+            this.thor.increaseScore();
+            this.enemies.splice(idx, 1);
+          }
         }
       });
     }
@@ -174,7 +209,11 @@ class FeelTheThunder {
           // Makes the hammer hits once (1)
           if (!enemy.states.isBeingHitted) {
             enemy.life -= this.thor.attacks.hammer;
-            if (enemy.life <= 0) this.enemies.splice(idx, 1);
+            if (enemy.life <= 0) {
+              this.thor.increasePowerPoints();
+              this.thor.increaseScore();
+              this.enemies.splice(idx, 1);
+            }
           }
 
           // Makes the hammer hits once (2)
