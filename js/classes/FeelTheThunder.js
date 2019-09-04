@@ -77,8 +77,8 @@ class FeelTheThunder {
 
     window.addEventListener("keydown", e => {
       if (e.keyCode === this.thor.keys.attack) {
-        this.thor.getStates.isAttacking = true;
-        this.thorAttack();
+        this.thor.states.isAttacking = true;
+        if (!this.thor.states.isJumping) this.thorAttack();
       }
 
       if (e.keyCode === this.thor.keys.radio) {

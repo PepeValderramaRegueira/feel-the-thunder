@@ -94,6 +94,12 @@ class Thor extends GameCharacter {
       this.gameCharacter.frames = 5;
       this.gameCharacter.src = "./assets/thor-walking-reverse.png";
     }
+    
+    if (this.states.isAttacking) {
+      this.gameCharacter.frames = 2
+      if (this.states.isLookingRight) this.gameCharacter.src = './assets/thor-attacking.png'
+      else this.gameCharacter.src = './assets/thor-attacking-reverse.png'
+    }
 
     if (this.states.isThrowingHammer && this.states.isLookingRight) {
       this.gameCharacter.frames = 1;
@@ -126,7 +132,6 @@ class Thor extends GameCharacter {
     }
 
     if (this.states.isThrowingHammer) {
-      console.log(this.states.isThrowingHammer);
       if (this.states.isLookingRight) {
         if (this.hammer.x <= this.x) this.states.isThrowingHammer = false;
       }
@@ -204,6 +209,10 @@ class Thor extends GameCharacter {
         this.states.isMoving = false;
         this.states.isGoingLeft = false;
       }
+
+      if (e.keyCode === this.keys.attack) {
+        this.states.isAttacking = false
+      }
     });
   }
 
@@ -255,7 +264,7 @@ class Thor extends GameCharacter {
   }
 
   animateGameCharacter(framesCounter) {
-    if (framesCounter % 6 === 0) {
+    if (framesCounter % 10 === 0) {
       this.gameCharacter.frameIndex += 1;
 
       if (this.gameCharacter.frameIndex > this.gameCharacter.frames - 1)
