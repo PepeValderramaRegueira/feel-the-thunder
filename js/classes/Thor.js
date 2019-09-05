@@ -198,6 +198,10 @@ class Thor extends GameCharacter {
           this.bgH - 80 - this.h / 2,
           this.bgW
         );
+      } else  {
+        if (e.keyCode === this.keys.throwHummer) {
+          this.hammer.speedX *= -1
+        }
       }
     });
 
