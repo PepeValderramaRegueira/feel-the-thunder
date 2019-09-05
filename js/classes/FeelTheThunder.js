@@ -11,8 +11,8 @@ class FeelTheThunder {
     this.h = h;
     this.h2 = h / 2;
 
-    this.hammerHitsAudio = new Audio('./audio/metal-hit-1.mov')
-    this.flyingHammerAudio = new Audio('./audio/flying-hammer.wav')
+    // this.hammerHitsAudio = new Audio('./audio/metal-hit-1.mov')
+    // this.flyingHammerAudio = new Audio('./audio/flying-hammer.wav')
     
     this.powerPointsHammer = new Image();
     this.powerPointsHammer.src = "./assets/powers/mjonlir.png";
@@ -86,7 +86,7 @@ class FeelTheThunder {
   drawThorInfo() {
     this.ctx.beginPath();
     this.ctx.arc(this.w - 120, 120, 100, 0, this.PI2);
-    this.ctx.fillStyle = "#AA00AAAA";
+    this.ctx.fillStyle = "#FF00FF88";
     this.ctx.fill();
     this.ctx.closePath();
 
@@ -104,24 +104,6 @@ class FeelTheThunder {
     this.ctx.closePath();
 
     this.ctx.drawImage(this.characterImg, this.w - 190, 50);
-
-    // this.ctx.beginPath();
-    // this.ctx.font = "30px sans-serif";
-    // this.ctx.fillStyle = "#FFFF00";
-    // this.ctx.fillText(`Power points: ${this.thor.getPowerPoints}`, 10, 50);
-    // this.ctx.closePath();
-
-    // this.ctx.beginPath();
-    // this.ctx.font = "30px sans-serif";
-    // this.ctx.fillStyle = "#FFFF00";
-    // this.ctx.fillText(`Enemies killed: ${this.thor.enemiesKilled}`, 10, 100);
-    // this.ctx.closePath();
-
-    // this.ctx.beginPath();
-    // this.ctx.font = "30px sans-serif";
-    // this.ctx.fillStyle = "#FFFF00";
-    // this.ctx.fillText(`Life: ${Math.round(this.thor.life)}`, 10, 150);
-    // this.ctx.closePath();
   }
 
   drawPowerPoints() {
@@ -131,9 +113,47 @@ class FeelTheThunder {
     this.ctx.restore();
 
     this.ctx.save();
+    this.ctx.beginPath()
+    this.ctx.rect(20, 100, 60, 60);
+    this.ctx.fillStyle = "#003333DD"
+    this.ctx.strokeStyle = "#00FFFF";
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
+    this.ctx.fill()
+    this.ctx.closePath()
+    this.ctx.restore();
+
+    this.ctx.beginPath()
+    this.ctx.font = "300 30px sans-serif"
+    this.ctx.fillStyle = "#00FFFF"
+    this.ctx.fillText("1", 40, 140)
+    this.ctx.closePath()
+
+    // ---------------------------------------------
+
+    this.ctx.save();
     this.ctx.globalAlpha = this.thor.powerPoints >= 3 ? 1 : 0.5;
     this.ctx.drawImage(this.powerPointsBolt, 100, 20);
     this.ctx.restore();
+
+    this.ctx.save();
+    this.ctx.beginPath()
+    this.ctx.rect(100, 100, 60, 60);
+    this.ctx.fillStyle = "#003333DD"
+    this.ctx.strokeStyle = "#00FFFF";
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
+    this.ctx.fill()
+    this.ctx.closePath()
+    this.ctx.restore();
+
+    this.ctx.beginPath()
+    this.ctx.font = "300 30px sans-serif"
+    this.ctx.fillStyle = "#00FFFF"
+    this.ctx.fillText("2", 120, 140)
+    this.ctx.closePath()
+
+    // ---------------------------------------------
 
     this.ctx.save();
     this.ctx.globalAlpha = this.thor.powerPoints >= 4 ? 1 : 0.5;
@@ -141,9 +161,45 @@ class FeelTheThunder {
     this.ctx.restore();
 
     this.ctx.save();
+    this.ctx.beginPath()
+    this.ctx.rect(180, 100, 60, 60);
+    this.ctx.fillStyle = "#003333DD"
+    this.ctx.strokeStyle = "#00FFFF";
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
+    this.ctx.fill()
+    this.ctx.closePath()
+    this.ctx.restore();
+
+    this.ctx.beginPath()
+    this.ctx.font = "300 30px sans-serif"
+    this.ctx.fillStyle = "#00FFFF"
+    this.ctx.fillText("3", 200, 140)
+    this.ctx.closePath()
+
+    // ---------------------------------------------
+
+    this.ctx.save();
     this.ctx.globalAlpha = this.thor.powerPoints >= 5 ? 1 : 0.5;
     this.ctx.drawImage(this.powerPointsHulk, 260, 20);
     this.ctx.restore();
+
+    this.ctx.save();
+    this.ctx.beginPath()
+    this.ctx.rect(260, 100, 60, 60);
+    this.ctx.fillStyle = "#003333DD"
+    this.ctx.strokeStyle = "#00FFFF";
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
+    this.ctx.fill()
+    this.ctx.closePath()
+    this.ctx.restore();
+
+    this.ctx.beginPath()
+    this.ctx.font = "300 30px sans-serif"
+    this.ctx.fillStyle = "#00FFFF"
+    this.ctx.fillText("4", 280, 140)
+    this.ctx.closePath()
   }
 
   detectPowerUp() {
@@ -323,7 +379,7 @@ class FeelTheThunder {
         ) {
           enemy.life -= this.thor.attacks.hammer;
 
-          this.hammerHitsAudio.play()
+          // this.hammerHitsAudio.play()
 
           if (enemy.life <= 0) {
             this.thor.increasePowerPoints();
@@ -425,7 +481,7 @@ class FeelTheThunder {
           // Makes the hammer hits once (1)
           if (!enemy.states.isBeingHitted) {
             enemy.life -= this.thor.attacks.hammer;
-            this.flyingHammerAudio.play()
+            // this.flyingHammerAudio.play()
             if (enemy.life <= 0) {
               this.thor.increasePowerPoints();
               this.thor.increaseScore();
