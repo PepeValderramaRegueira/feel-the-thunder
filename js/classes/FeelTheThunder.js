@@ -2,6 +2,9 @@ class FeelTheThunder {
   constructor(ctx, w, h) {
     this.ctx = ctx;
 
+    this.PI = Math.PI
+    this.PI2 = this.PI * 2
+
     // Dimensions
     this.w = w;
     this.w2 = w / 2;
@@ -9,7 +12,7 @@ class FeelTheThunder {
     this.h2 = h / 2;
 
     this.powerUps = [];
-    this.lighning = undefined;
+    this.lighnings = [];
 
     this.framesCounter = 0;
 
@@ -17,6 +20,10 @@ class FeelTheThunder {
 
     // Game engine
     this.intervalID = undefined;
+
+    this.feelTheThunderAttackLighnings = 30;
+    this.feelTheThunderAttackSpaceBetweenLighnings =
+      this.w / this.feelTheThunderAttackLighnings;
 
     // FPS
     this.fps = 60;
@@ -97,6 +104,15 @@ class FeelTheThunder {
         }
       });
     }
+  }
+
+  drawScope() {
+    this.ctx.beginPath()
+    this.ctx.arc(this.thor.mouseX, this.thor.mouseY, 40, 0, this.PI2)
+    this.ctx.strokeStyle = "#FF0000EE"
+    this.ctx.lineWidth = 5
+    this.ctx.stroke()
+    this.ctx.closePath()
   }
 
   generateEnemys() {
@@ -216,7 +232,7 @@ class FeelTheThunder {
       this.clearScreen();
       this.framesCounter++;
       this.thor.framesCounter++;
-      
+
       this.drawBackground();
       this.drawGround();
       this.generateEnemys();
@@ -225,9 +241,10 @@ class FeelTheThunder {
       this.drawPowerUps();
       this.detectPowerUp();
       this.generatePowerUps();
-      this.drawLighning()
+      this.drawLighnings();
+      this.drawScope()
       this.drawThor();
-      
+
       this.counter++;
       if (this.framesCounter > 1000) this.framesCounter = 0;
     }, 1000 / this.fps);
@@ -253,20 +270,25 @@ class FeelTheThunder {
     }
   }
 
-  drawLighning() {
-    if (this.lighning) {
-      this.lighning.draw()
+  addLightning(x) {
+    this.lighnings.push(new Lightning(this.ctx, x, this.h));
+  }
+
+  drawLighnings() {
+    if (this.lighnings) {
+      this.lighnings.forEach(lighning => {
+        lighning.draw();
+      });
     }
   }
 
   throwLighning() {
+    this.addLightning(this.thor.mouseX)
 
-      this.lighning = new Lightning(this.ctx, this.thor.mouseX, this.h)
+    setTimeout(() => {
+      this.lighnings.splice(this.lighnings.length - 1, 1);
+    }, 500);
 
-      setTimeout(() => {
-        this.lighning = undefined
-      }, 500)
-    
     if (this.enemies.length > 0) {
       this.enemies.forEach((enemy, idx) => {
         if (
@@ -288,6 +310,15 @@ class FeelTheThunder {
   }
 
   feelTheThunderAttack() {
+
+    for (let i = 0; i < this.feelTheThunderAttackLighnings; i++) {
+      this.addLightning(this.feelTheThunderAttackSpaceBetweenLighnings * i)
+    }
+
+    setTimeout(() => {
+      this.lighnings = []
+    }, 500)
+    
     if (this.enemies.length > 0) {
       this.thor.powerPoints = 5;
       this.thor.enemiesKilled += this.enemies.length;
