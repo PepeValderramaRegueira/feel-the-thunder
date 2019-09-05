@@ -8,7 +8,7 @@ class FeelTheThunder {
     this.h = h;
     this.h2 = h / 2;
 
-    this.beer = new PowerUp(this.ctx, 200, this.h - 130, 100, 124);
+    this.powerUps = [];
 
     this.framesCounter = 0;
 
@@ -84,15 +84,25 @@ class FeelTheThunder {
   }
 
   detectPowerUp() {
-    if (this.beer !== undefined) {
-      if (
-        this.thor.x >= this.beer.x &&
-        this.thor.x <= this.beer.x + this.beer.w &&
-        this.thor.y + this.thor.h >= this.beer.y
-      ) {
-        this.thor.increaseLife(this.beer.life)
-        this.beer = undefined
-      }
+    if (this.powerUps) {
+      this.powerUps.forEach((powerUp, idx) => {
+        if (
+          this.thor.x >= powerUp.x &&
+          this.thor.x <= powerUp.x + powerUp.w &&
+          this.thor.y + this.thor.h >= powerUp.y
+        ) {
+          this.thor.increaseLife(powerUp.life);
+          this.powerUps.splice(idx, 1);
+        }
+      });
+    }
+  }
+
+  drawPowerUps() {
+    if (this.powerUps) {
+      this.powerUps.forEach(powerUp => {
+        powerUp.draw();
+      });
     }
   }
 
@@ -143,11 +153,10 @@ class FeelTheThunder {
       this.background.draw();
       this.ground.draw();
       this.drawEnemies();
-      
-      if (this.beer) this.beer.draw();
-      
       this.drawThorInfo();
+      this.drawPowerUps();
       this.detectPowerUp();
+
       this.thor.draw(this.framesCounter);
 
       this.counter++;
@@ -169,7 +178,18 @@ class FeelTheThunder {
         );
       }
 
-      if (this.counter >= 2000) this.counter = 0;
+      if (this.counter >= 5000) {
+        this.powerUps.push(
+          new PowerUp(
+            this.ctx,
+            Math.round(Math.random() * this.w),
+            this.h - 130,
+            100,
+            124
+          )
+        );
+        this.counter = 0;
+      }
     }, 1000 / this.fps);
   }
 
