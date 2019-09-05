@@ -8,6 +8,8 @@ class FeelTheThunder {
     this.h = h;
     this.h2 = h / 2;
 
+    this.beer = new PowerUp(this.ctx, 200, this.h - 130, 100, 124);
+
     this.framesCounter = 0;
 
     this.counter = 0;
@@ -57,16 +59,41 @@ class FeelTheThunder {
 
   drawThorInfo() {
     this.ctx.beginPath();
+    this.ctx.rect(0, 0, 300, 200);
+    this.ctx.fillStyle = "#00000044";
+    this.ctx.fill();
+    this.ctx.closePath();
+
+    this.ctx.beginPath();
     this.ctx.font = "30px sans-serif";
-    this.ctx.fillStyle = "#000000";
+    this.ctx.fillStyle = "#FFFF00";
     this.ctx.fillText(`Power points: ${this.thor.getPowerPoints}`, 10, 50);
     this.ctx.closePath();
 
     this.ctx.beginPath();
     this.ctx.font = "30px sans-serif";
-    this.ctx.fillStyle = "#000000";
+    this.ctx.fillStyle = "#FFFF00";
     this.ctx.fillText(`Enemies killed: ${this.thor.enemiesKilled}`, 10, 100);
     this.ctx.closePath();
+
+    this.ctx.beginPath();
+    this.ctx.font = "30px sans-serif";
+    this.ctx.fillStyle = "#FFFF00";
+    this.ctx.fillText(`Life: ${Math.round(this.thor.life)}`, 10, 150);
+    this.ctx.closePath();
+  }
+
+  detectPowerUp() {
+    if (this.beer !== undefined) {
+      if (
+        this.thor.x >= this.beer.x &&
+        this.thor.x <= this.beer.x + this.beer.w &&
+        this.thor.y + this.thor.h >= this.beer.y
+      ) {
+        this.thor.increaseLife(this.beer.life)
+        this.beer = undefined
+      }
+    }
   }
 
   start() {
@@ -81,15 +108,24 @@ class FeelTheThunder {
         if (!this.thor.states.isJumping) this.thorAttack();
       }
 
-      if (e.keyCode === this.thor.keys.radio) {
+      if (e.keyCode === this.thor.keys.radio && this.thor.powerPoints >= 3) {
+        this.thor.powerPoints -= 3;
         this.thorMakesRadio();
       }
 
-      if (e.keyCode === this.thor.keys.feelTheThunder) {
+      if (
+        e.keyCode === this.thor.keys.feelTheThunder &&
+        this.thor.powerPoints >= 5
+      ) {
+        this.thor.powerPoints -= 5;
         this.feelTheThunderAttack();
       }
 
-      if (e.keyCode === this.thor.keys.throwLighning) {
+      if (
+        e.keyCode === this.thor.keys.throwLighning &&
+        this.thor.powerPoints >= 4
+      ) {
+        this.thor.powerPoints -= 4;
         this.throwLighning();
       }
     });
@@ -107,7 +143,11 @@ class FeelTheThunder {
       this.background.draw();
       this.ground.draw();
       this.drawEnemies();
+      
+      if (this.beer) this.beer.draw();
+      
       this.drawThorInfo();
+      this.detectPowerUp();
       this.thor.draw(this.framesCounter);
 
       this.counter++;
@@ -232,25 +272,24 @@ class FeelTheThunder {
 
         if (enemy.states.isLookingRight) {
           if (
-              this.thor.x >= enemy.x &&
-              this.thor.x <= enemy.x + enemy.w &&
-              this.thor.y >= enemy.y
-            ) {
+            this.thor.x >= enemy.x &&
+            this.thor.x <= enemy.x + enemy.w &&
+            this.thor.y >= enemy.y
+          ) {
             this.thor.life -= 0.2;
           }
         }
 
         if (enemy.states.isLookingLeft) {
           if (
-              this.thor.x >= enemy.x &&
-              this.thor.x <= enemy.x + enemy.w &&
-              this.thor.y >= enemy.y
-            ) {
+            this.thor.x >= enemy.x &&
+            this.thor.x <= enemy.x + enemy.w &&
+            this.thor.y >= enemy.y
+          ) {
             this.thor.life -= 0.2;
           }
         }
 
-        console.log(this.thor.life);
         if (this.thor.life <= 0) clearInterval(this.intervalID);
 
         enemy.draw();

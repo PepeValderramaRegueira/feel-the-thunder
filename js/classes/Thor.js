@@ -78,11 +78,16 @@ class Thor extends GameCharacter {
     return this.powerPoints;
   }
 
+  increaseLife(life) {
+    this.life += life
+
+    if (this.life >= 100) this.life = 100
+  }
+
   updateFrame(srcYPosition) {
     this.currentFrame = ++this.currentFrame % this.cols;
     this.srcX = this.currentFrame * this.singleSpriteWidth;
     this.srcY = 3;
-    console.log(this.srcYPosition)
   }
 
   drawImage(srcYPosition) {
@@ -129,7 +134,6 @@ class Thor extends GameCharacter {
       this.gameCharacter.src = "./assets/thor-jumping-reverse.png";
     } else if (this.states.isGoingLeft && this.isTouchingGround) {
       this.gameCharacter.frames = 5;
-      console.log('cambia')
       this.gameCharacter.src = "./assets/thor-walking-reverse.png";
     }
 
