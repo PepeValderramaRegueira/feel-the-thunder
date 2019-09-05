@@ -41,9 +41,9 @@ class Thor extends GameCharacter {
       jump: 32,
       attack: 81,
       throwHummer: 49,
-      radio: 50,
-      throwLighning: 51,
-      feelTheThunder: 52
+      throwLighning: 50,
+      feelTheThunder: 51,
+      releaseTheHulk: 52
     };
 
     // Sprite config
@@ -303,8 +303,6 @@ class Thor extends GameCharacter {
       this.y += this.speedY;
     }
   }
-
-  attack() {}
 
   isMoving() {
     // If Thor is not moving, reset the X speed

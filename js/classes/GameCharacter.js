@@ -58,16 +58,10 @@ class GameCharacter {
       this.states.isLookingLeft = true
     }
 
-    // console.log(this.states)
-
     this.x += this.speedX
 
     if (this.y >= this.bgH - this.h - 20) this.y = this.bgH - this.h - 20;
-    this.ctx.beginPath()
-    this.ctx.rect(this.x, this.y, this.w, this.h)
-    this.ctx.fillStyle = this.color
-    this.ctx.fill()
-    this.ctx.closePath()
+    
   }
 
   applyGravity() {

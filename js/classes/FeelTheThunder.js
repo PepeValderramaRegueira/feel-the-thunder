@@ -2,8 +2,8 @@ class FeelTheThunder {
   constructor(ctx, w, h) {
     this.ctx = ctx;
 
-    this.PI = Math.PI
-    this.PI2 = this.PI * 2
+    this.PI = Math.PI;
+    this.PI2 = this.PI * 2;
 
     // Dimensions
     this.w = w;
@@ -11,8 +11,23 @@ class FeelTheThunder {
     this.h = h;
     this.h2 = h / 2;
 
+    this.powerPointsHammer = new Image();
+    this.powerPointsHammer.src = "./assets/powers/mjonlir.png";
+
+    this.powerPointsBolt = new Image();
+    this.powerPointsBolt.src = "./assets/powers/bolt.png";
+
+    this.powerPointsThunder = new Image();
+    this.powerPointsThunder.src = "./assets/powers/thunder.png";
+
+    this.powerPointsHulk = new Image();
+    this.powerPointsHulk.src = "./assets/powers/hulk.png";
+
     this.powerUps = [];
     this.lighnings = [];
+
+    this.characterImg = new Image();
+    this.characterImg.src = "./assets/character/thor.png";
 
     this.framesCounter = 0;
 
@@ -67,28 +82,65 @@ class FeelTheThunder {
 
   drawThorInfo() {
     this.ctx.beginPath();
-    this.ctx.rect(0, 0, 300, 200);
-    this.ctx.fillStyle = "#00000044";
+    this.ctx.arc(this.w - 120, 120, 100, 0, this.PI2);
+    this.ctx.fillStyle = "#AA00AAAA";
     this.ctx.fill();
     this.ctx.closePath();
 
     this.ctx.beginPath();
-    this.ctx.font = "30px sans-serif";
-    this.ctx.fillStyle = "#FFFF00";
-    this.ctx.fillText(`Power points: ${this.thor.getPowerPoints}`, 10, 50);
+    this.ctx.arc(
+      this.w - 120,
+      120,
+      100,
+      0,
+      (this.PI / 180) * ((this.thor.life * 360) / 100)
+    );
+    this.ctx.strokeStyle = "#FFFF00";
+    this.ctx.lineWidth = 8;
+    this.ctx.stroke();
     this.ctx.closePath();
 
-    this.ctx.beginPath();
-    this.ctx.font = "30px sans-serif";
-    this.ctx.fillStyle = "#FFFF00";
-    this.ctx.fillText(`Enemies killed: ${this.thor.enemiesKilled}`, 10, 100);
-    this.ctx.closePath();
+    this.ctx.drawImage(this.characterImg, this.w - 190, 50);
 
-    this.ctx.beginPath();
-    this.ctx.font = "30px sans-serif";
-    this.ctx.fillStyle = "#FFFF00";
-    this.ctx.fillText(`Life: ${Math.round(this.thor.life)}`, 10, 150);
-    this.ctx.closePath();
+    // this.ctx.beginPath();
+    // this.ctx.font = "30px sans-serif";
+    // this.ctx.fillStyle = "#FFFF00";
+    // this.ctx.fillText(`Power points: ${this.thor.getPowerPoints}`, 10, 50);
+    // this.ctx.closePath();
+
+    // this.ctx.beginPath();
+    // this.ctx.font = "30px sans-serif";
+    // this.ctx.fillStyle = "#FFFF00";
+    // this.ctx.fillText(`Enemies killed: ${this.thor.enemiesKilled}`, 10, 100);
+    // this.ctx.closePath();
+
+    // this.ctx.beginPath();
+    // this.ctx.font = "30px sans-serif";
+    // this.ctx.fillStyle = "#FFFF00";
+    // this.ctx.fillText(`Life: ${Math.round(this.thor.life)}`, 10, 150);
+    // this.ctx.closePath();
+  }
+
+  drawPowerPoints() {
+    this.ctx.save();
+    this.ctx.globalAlpha = this.thor.powerPoints >= 2 ? 1 : 0.5;
+    this.ctx.drawImage(this.powerPointsHammer, 20, 20);
+    this.ctx.restore();
+
+    this.ctx.save();
+    this.ctx.globalAlpha = this.thor.powerPoints >= 3 ? 1 : 0.5;
+    this.ctx.drawImage(this.powerPointsBolt, 100, 20);
+    this.ctx.restore();
+
+    this.ctx.save();
+    this.ctx.globalAlpha = this.thor.powerPoints >= 4 ? 1 : 0.5;
+    this.ctx.drawImage(this.powerPointsThunder, 180, 20);
+    this.ctx.restore();
+
+    this.ctx.save();
+    this.ctx.globalAlpha = this.thor.powerPoints >= 5 ? 1 : 0.5;
+    this.ctx.drawImage(this.powerPointsHulk, 260, 20);
+    this.ctx.restore();
   }
 
   detectPowerUp() {
@@ -107,21 +159,21 @@ class FeelTheThunder {
   }
 
   drawScope() {
-    this.ctx.beginPath()
-    this.ctx.arc(this.thor.mouseX, this.thor.mouseY, 40, 0, this.PI2)
-    this.ctx.strokeStyle = "#FF0000EE"
-    this.ctx.lineWidth = 5
-    this.ctx.stroke()
-    this.ctx.closePath()
+    this.ctx.beginPath();
+    this.ctx.arc(this.thor.mouseX, this.thor.mouseY, 40, 0, this.PI2);
+    this.ctx.strokeStyle = "#FF0000EE";
+    this.ctx.lineWidth = 5;
+    this.ctx.stroke();
+    this.ctx.closePath();
   }
 
   generateEnemys() {
     if (this.counter % 150 === 0) {
-      switch (Math.floor(Math.random() * 3)) {
+      switch (Math.floor(Math.random() * 2)) {
         case 0:
           this.enemies.push(
             new Elf(
-              ctx,
+              this.ctx,
               75,
               200,
               Math.floor(Math.random() * this.w),
@@ -137,7 +189,7 @@ class FeelTheThunder {
         case 1:
           this.enemies.push(
             new Troll(
-              ctx,
+              this.ctx,
               200,
               400,
               Math.floor(Math.random() * this.w),
@@ -201,25 +253,28 @@ class FeelTheThunder {
         if (!this.thor.states.isJumping) this.thorAttack();
       }
 
-      if (e.keyCode === this.thor.keys.radio && this.thor.powerPoints >= 3) {
+      if (
+        e.keyCode === this.thor.keys.throwLighning &&
+        this.thor.powerPoints >= 3
+      ) {
         this.thor.powerPoints -= 3;
-        this.thorMakesRadio();
+        this.throwLighning();
       }
 
       if (
         e.keyCode === this.thor.keys.feelTheThunder &&
-        this.thor.powerPoints >= 5
+        this.thor.powerPoints >= 4
       ) {
-        this.thor.powerPoints -= 5;
+        this.thor.powerPoints -= 4;
         this.feelTheThunderAttack();
       }
 
       if (
-        e.keyCode === this.thor.keys.throwLighning &&
-        this.thor.powerPoints >= 4
+        e.keyCode === this.thor.keys.releaseTheHulk &&
+        this.thor.powerPoints >= 5
       ) {
-        this.thor.powerPoints -= 4;
-        this.throwLighning();
+        this.thor.powerPoints -= 5;
+        this.feelTheThunderAttack();
       }
     });
   }
@@ -229,6 +284,7 @@ class FeelTheThunder {
     this.thor.handleKeyEvents();
 
     this.intervalID = setInterval(() => {
+      // clearInterval(this.intervalID)
       this.clearScreen();
       this.framesCounter++;
       this.thor.framesCounter++;
@@ -238,11 +294,12 @@ class FeelTheThunder {
       this.generateEnemys();
       this.drawEnemies();
       this.drawThorInfo();
+      this.drawPowerPoints();
       this.drawPowerUps();
       this.detectPowerUp();
       this.generatePowerUps();
       this.drawLighnings();
-      this.drawScope()
+      this.drawScope();
       this.drawThor();
 
       this.counter++;
@@ -283,7 +340,7 @@ class FeelTheThunder {
   }
 
   throwLighning() {
-    this.addLightning(this.thor.mouseX)
+    this.addLightning(this.thor.mouseX);
 
     setTimeout(() => {
       this.lighnings.splice(this.lighnings.length - 1, 1);
@@ -310,17 +367,15 @@ class FeelTheThunder {
   }
 
   feelTheThunderAttack() {
-
     for (let i = 0; i < this.feelTheThunderAttackLighnings; i++) {
-      this.addLightning(this.feelTheThunderAttackSpaceBetweenLighnings * i)
+      this.addLightning(this.feelTheThunderAttackSpaceBetweenLighnings * i);
     }
 
     setTimeout(() => {
-      this.lighnings = []
-    }, 500)
-    
+      this.lighnings = [];
+    }, 500);
+
     if (this.enemies.length > 0) {
-      this.thor.powerPoints = 5;
       this.thor.enemiesKilled += this.enemies.length;
       this.enemies = [];
     }
@@ -396,7 +451,7 @@ class FeelTheThunder {
 
         if (this.thor.life <= 0) clearInterval(this.intervalID);
 
-        enemy.draw();
+        enemy.draw(this.framesCounter);
       });
     }
   }
