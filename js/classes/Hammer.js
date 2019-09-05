@@ -18,7 +18,7 @@ class Hammer {
     this.ctx.beginPath();
 
     if (direction === "right") {
-      if (this.x <= this.bgW) {
+      if (this.x <= this.bgW - this.w) {
         this.x += this.speedX;
       }
 

@@ -11,6 +11,9 @@ class FeelTheThunder {
     this.h = h;
     this.h2 = h / 2;
 
+    this.hammerHitsAudio = new Audio('./audio/metal-hit-1.mov')
+    this.flyingHammerAudio = new Audio('./audio/flying-hammer.wav')
+    
     this.powerPointsHammer = new Image();
     this.powerPointsHammer.src = "./assets/powers/mjonlir.png";
 
@@ -168,9 +171,11 @@ class FeelTheThunder {
   }
 
   generateEnemys() {
-    if (this.counter % 150 === 0) {
+    if (this.counter % 75 === 0) {
       switch (Math.floor(Math.random() * 2)) {
         case 0:
+        case 1:
+        case 2:
           this.enemies.push(
             new Elf(
               this.ctx,
@@ -313,9 +318,12 @@ class FeelTheThunder {
         if (
           this.thor.x + this.thor.w >= enemy.x &&
           this.thor.x <= enemy.x + enemy.w &&
-          this.thor.y >= enemy.y
+          this.thor.y >= enemy.y &&
+          this.thor.y + this.thor.h <= enemy.y + enemy.h
         ) {
           enemy.life -= this.thor.attacks.hammer;
+
+          this.hammerHitsAudio.play()
 
           if (enemy.life <= 0) {
             this.thor.increasePowerPoints();
@@ -410,11 +418,14 @@ class FeelTheThunder {
         if (
           this.thor.hammer &&
           this.thor.hammer.x >= enemy.x &&
-          this.thor.hammer.x <= enemy.x + enemy.w
+          this.thor.hammer.x <= enemy.x + enemy.w &&
+          this.thor.hammer.y >= enemy.y &&
+          this.thor.hammer.y + this.thor.hammer.h <= enemy.y + enemy.h
         ) {
           // Makes the hammer hits once (1)
           if (!enemy.states.isBeingHitted) {
             enemy.life -= this.thor.attacks.hammer;
+            this.flyingHammerAudio.play()
             if (enemy.life <= 0) {
               this.thor.increasePowerPoints();
               this.thor.increaseScore();
