@@ -46,9 +46,22 @@ class Thor extends GameCharacter {
       feelTheThunder: 52
     };
 
+    // Sprite config
+    this.srcX = 0;
+    this.srcY = 0;
+    this.sheetWidth = 550;
+    this.sheetHeight = 2000;
+    this.frameCount = 6;
+    this.cols = 5;
+    this.rows = 10;
+    this.singleSpriteWidth = this.sheetWidth / this.cols;
+    this.singleSpriteHeight = this.sheetHeight / this.rows;
+    this.currentFrame = 0;
+
     // Image
     this.gameCharacter = new Image();
-    this.gameCharacter.src = "./assets/thor-walking.png";
+    // this.gameCharacter.src = "./assets/sprites-good-big.png";
+    this.gameCharacter.src = "./assets/thor-not-moving.png";
     this.gameCharacter.frames = 5;
     this.gameCharacter.frameIndex = 0;
 
@@ -65,6 +78,28 @@ class Thor extends GameCharacter {
     return this.powerPoints;
   }
 
+  updateFrame(srcYPosition) {
+    this.currentFrame = ++this.currentFrame % this.cols;
+    this.srcX = this.currentFrame * this.singleSpriteWidth;
+    this.srcY = 3;
+    console.log(this.srcYPosition)
+  }
+
+  drawImage(srcYPosition) {
+    this.updateFrame(srcYPosition);
+    this.ctx.drawImage(
+      this.gameCharacter,
+      this.srcX,
+      this.srcY,
+      this.singleSpriteWidth,
+      this.singleSpriteHeight,
+      this.x,
+      this.y,
+      this.singleSpriteWidth,
+      this.singleSpriteHeight
+    );
+  }
+
   increasePowerPoints() {
     this.powerPoints < 5 ? this.powerPoints++ : null;
   }
@@ -74,14 +109,14 @@ class Thor extends GameCharacter {
   }
 
   draw(framesCounter) {
-    this.controller()
+    // let srcYPosition = 0
+    this.controller();
 
     if (this.y >= this.bgH - this.h - 20) this.y = this.bgH - this.h - 20;
 
     if (!this.states.isMoving && !this.states.isJumping) {
       this.gameCharacter.frames = 1;
-      if (this.states.isLookingRight)
-        this.gameCharacter.src = "./assets/thor-not-moving.png";
+      if (this.states.isLookingRight) this.gameCharacter.src = "./assets/thor-not-moving.png";
       else this.gameCharacter.src = "./assets/thor-not-moving-reverse.png";
     } else if (this.states.isGoingRight && this.states.isTouchingGround) {
       this.gameCharacter.frames = 5;
@@ -94,13 +129,16 @@ class Thor extends GameCharacter {
       this.gameCharacter.src = "./assets/thor-jumping-reverse.png";
     } else if (this.states.isGoingLeft && this.isTouchingGround) {
       this.gameCharacter.frames = 5;
+      console.log('cambia')
       this.gameCharacter.src = "./assets/thor-walking-reverse.png";
     }
-    
+
     if (this.states.isAttacking) {
-      this.gameCharacter.frames = 2
-      if (this.states.isLookingRight) this.gameCharacter.src = './assets/thor-attacking.png'
-      else this.gameCharacter.src = './assets/thor-attacking-reverse.png'
+      this.gameCharacter.frames = 2;
+      if (this.states.isLookingRight)
+        this.gameCharacter.src = "./assets/thor-attacking.png";
+      else
+        this.gameCharacter.src = "./assets/thor-attacking-reverse.png";
     }
 
     if (this.states.isThrowingHammer && this.states.isLookingRight) {
@@ -110,6 +148,8 @@ class Thor extends GameCharacter {
       this.gameCharacter.frames = 1;
       this.gameCharacter.src = "./assets/thor-waiting-hammer-reverse.png";
     }
+
+    // this.drawImage(srcYPosition);
 
     this.ctx.drawImage(
       this.gameCharacter,
@@ -198,9 +238,9 @@ class Thor extends GameCharacter {
           this.bgH - 80 - this.h / 2,
           this.bgW
         );
-      } else  {
+      } else {
         if (e.keyCode === this.keys.throwHummer) {
-          this.hammer.speedX *= -1
+          this.hammer.speedX *= -1;
         }
       }
     });
@@ -217,7 +257,7 @@ class Thor extends GameCharacter {
       }
 
       if (e.keyCode === this.keys.attack) {
-        this.states.isAttacking = false
+        this.states.isAttacking = false;
       }
     });
   }
