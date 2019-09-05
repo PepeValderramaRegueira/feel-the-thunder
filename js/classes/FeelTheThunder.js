@@ -98,6 +98,45 @@ class FeelTheThunder {
     }
   }
 
+  generateEnemys() {
+    if (this.counter % 150 === 0) {
+      switch (Math.floor(Math.random() * 3)) {
+        case 0:
+          this.enemies.push(
+            new Elf(
+              ctx,
+              75,
+              200,
+              Math.floor(Math.random() * this.w),
+              200,
+              this.w,
+              this.h,
+              "#0FFFF0",
+              30,
+              25
+            )
+          );
+          break;
+        case 1:
+          this.enemies.push(
+            new Troll(
+              ctx,
+              200,
+              400,
+              Math.floor(Math.random() * this.w),
+              200,
+              this.w,
+              this.h,
+              "#00FF00",
+              150,
+              50
+            )
+          );
+          break;
+      }
+    }
+  }
+
   drawPowerUps() {
     if (this.powerUps) {
       this.powerUps.forEach(powerUp => {
@@ -106,7 +145,34 @@ class FeelTheThunder {
     }
   }
 
-  start() {
+  drawGround() {
+    this.ground.draw();
+  }
+
+  drawBackground() {
+    this.background.draw();
+  }
+
+  generatePowerUps() {
+    if (this.counter >= 5000) {
+      this.powerUps.push(
+        new PowerUp(
+          this.ctx,
+          Math.round(Math.random() * this.w),
+          this.h - 130,
+          100,
+          124
+        )
+      );
+      this.counter = 0;
+    }
+  }
+
+  drawThor() {
+    this.thor.draw(this.framesCounter);
+  }
+
+  handleKeyEvents() {
     window.addEventListener("mousemove", e => {
       this.thor.mouseX = e.clientX;
       this.thor.mouseY = e.clientY;
@@ -139,57 +205,29 @@ class FeelTheThunder {
         this.throwLighning();
       }
     });
+  }
 
+  start() {
+    this.handleKeyEvents();
     this.thor.handleKeyEvents();
 
     this.intervalID = setInterval(() => {
       this.clearScreen();
-
       this.framesCounter++;
       this.thor.framesCounter++;
-
-      if (this.framesCounter > 1000) this.framesCounter = 0;
-
-      this.background.draw();
-      this.ground.draw();
+      
+      this.drawBackground();
+      this.drawGround();
+      this.generateEnemys();
       this.drawEnemies();
       this.drawThorInfo();
       this.drawPowerUps();
       this.detectPowerUp();
-
-      this.thor.draw(this.framesCounter);
-
+      this.generatePowerUps();
+      this.drawThor();
+      
       this.counter++;
-
-      if (this.counter % 150 === 0) {
-        this.enemies.push(
-          new Elf(
-            ctx,
-            75,
-            200,
-            Math.floor(Math.random() * this.w),
-            200,
-            this.w,
-            this.h,
-            "#0FFFF0",
-            30,
-            25
-          )
-        );
-      }
-
-      if (this.counter >= 5000) {
-        this.powerUps.push(
-          new PowerUp(
-            this.ctx,
-            Math.round(Math.random() * this.w),
-            this.h - 130,
-            100,
-            124
-          )
-        );
-        this.counter = 0;
-      }
+      if (this.framesCounter > 1000) this.framesCounter = 0;
     }, 1000 / this.fps);
   }
 
