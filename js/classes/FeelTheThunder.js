@@ -9,6 +9,7 @@ class FeelTheThunder {
     this.h2 = h / 2;
 
     this.powerUps = [];
+    this.lighning = undefined;
 
     this.framesCounter = 0;
 
@@ -224,6 +225,7 @@ class FeelTheThunder {
       this.drawPowerUps();
       this.detectPowerUp();
       this.generatePowerUps();
+      this.drawLighning()
       this.drawThor();
       
       this.counter++;
@@ -251,7 +253,20 @@ class FeelTheThunder {
     }
   }
 
+  drawLighning() {
+    if (this.lighning) {
+      this.lighning.draw()
+    }
+  }
+
   throwLighning() {
+
+      this.lighning = new Lightning(this.ctx, this.thor.mouseX, this.h)
+
+      setTimeout(() => {
+        this.lighning = undefined
+      }, 500)
+    
     if (this.enemies.length > 0) {
       this.enemies.forEach((enemy, idx) => {
         if (
