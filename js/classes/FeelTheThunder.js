@@ -102,7 +102,7 @@ class FeelTheThunder {
   }
 
   checkBonusRestoreThorLife() {
-    if (this.thor.enemiesKilled % 40 === 0) this.thor.life = 100
+    if (this.thor.enemiesKilled % 40 === 0 && this.thor.enemiesKilled > 0) this.thor.life = 100
   }
 
   start() {
@@ -119,6 +119,7 @@ class FeelTheThunder {
 
       if (this.thor.states.isDead) {
         clearInterval(this.intervalID);
+        document.querySelector('.out').classList.add('out--visible')
         this.restartScreen();
       }
 
@@ -151,8 +152,6 @@ class FeelTheThunder {
 
   restartScreen() {
     this.clearScreen();
-    alert("Press the button to restart the game");
-    window.location.reload();
   }
 
   clearScreen() {
@@ -548,7 +547,7 @@ class FeelTheThunder {
             this.thor.x <= enemy.x + enemy.w &&
             this.thor.y >= enemy.y
           ) {
-            this.thor.life -= 0.1;
+            this.thor.life -= 0.15;
           }
         }
 
@@ -558,7 +557,7 @@ class FeelTheThunder {
             this.thor.x <= enemy.x + enemy.w &&
             this.thor.y >= enemy.y
           ) {
-            this.thor.life -= 0.1;
+            this.thor.life -= 0.15;
           }
         }
 
