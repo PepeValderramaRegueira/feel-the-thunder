@@ -33,6 +33,9 @@ class FeelTheThunder {
     this.powerPointsHulk = new Image();
     this.powerPointsHulk.src = "./assets/powers/hulk.png";
 
+    this.deadEnemiesImage = new Image()
+    this.deadEnemiesImage.src = './assets/skull.png'
+
     this.powerUps = [];
     this.lighnings = [];
 
@@ -87,17 +90,19 @@ class FeelTheThunder {
   }
 
   checkDifficulty() {
-    if (this.thor.enemiesKilled <= 5) this.generateEnemysFrequency = 275
+    if (this.thor.enemiesKilled <= 5) this.generateEnemysFrequency = 225
 
-    if (this.thor.enemiesKilled <= 15) this.generateEnemysFrequency = 200
+    if (this.thor.enemiesKilled <= 15) this.generateEnemysFrequency = 175
 
-    if (this.thor.enemiesKilled <= 20) this.generateEnemysFrequency = 150
+    if (this.thor.enemiesKilled <= 20) this.generateEnemysFrequency = 125
 
-    if (this.thor.enemiesKilled >= 30) this.generateEnemysFrequency = 75
+    if (this.thor.enemiesKilled >= 30) this.generateEnemysFrequency = 60
+
+    if (this.thor.enemiesKilled >= 100) this.generateEnemysFrequency = 50s
   }
 
   checkBonusRestoreThorLife() {
-    if (this.thor.enemiesKilled % 20 === 0) this.thor.life = 100
+    if (this.thor.enemiesKilled % 40 === 0) this.thor.life = 100
   }
 
   start() {
@@ -135,6 +140,7 @@ class FeelTheThunder {
       this.drawLighnings();
       this.drawScope();
       this.drawThor();
+      this.drawDeadEnemies()
 
       if (this.counter % 50 === 0) this.checkEnemiesLife()
 
@@ -273,6 +279,15 @@ class FeelTheThunder {
     this.ctx.fillStyle = "#00FFFF";
     this.ctx.fillText("4", 280, 140);
     this.ctx.closePath();
+  }
+
+  drawDeadEnemies() {
+    this.ctx.drawImage(this.deadEnemiesImage, this.w - 80, 280);
+    this.ctx.beginPath()
+    this.ctx.font = "600 30px sans-serif"
+    this.ctx.fillStyle = "#000000"
+    this.ctx.fillText(this.thor.enemiesKilled, this.w - 120, 320)
+    this.ctx.closePath()
   }
 
   detectPowerUp() {
