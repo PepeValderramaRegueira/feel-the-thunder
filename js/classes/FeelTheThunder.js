@@ -5,6 +5,10 @@ class FeelTheThunder {
     this.PI = Math.PI;
     this.PI2 = this.PI * 2;
 
+    this.generateEnemysFrequency = 300
+
+    this.gameStarted = false;
+
     // Dimensions
     this.w = w;
     this.w2 = w / 2;
@@ -13,9 +17,12 @@ class FeelTheThunder {
 
     // this.hammerHitsAudio = new Audio('./audio/metal-hit-1.mov')
     // this.flyingHammerAudio = new Audio('./audio/flying-hammer.wav')
-    
+
     this.powerPointsHammer = new Image();
     this.powerPointsHammer.src = "./assets/powers/mjonlir.png";
+
+    this.soundtrack = new Audio();
+    this.soundtrack.src = "./audio/inmigrant-song-8-bits.mp3";
 
     this.powerPointsBolt = new Image();
     this.powerPointsBolt.src = "./assets/powers/bolt.png";
@@ -47,14 +54,7 @@ class FeelTheThunder {
     this.fps = 60;
 
     // Array for the enemies
-    this.enemies = [
-      // new Elf(ctx, 75, 200, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
-      // new Troll(ctx, 200, 400, 600, 200, this.w, this.h, "#00FF00", 150, 50),
-      // new Elf(ctx, 75, 200, 450, 200, this.w, this.h, "#0FFFF0", 30, 25),
-      // new Elf(ctx, 75, 200, 300, 200, this.w, this.h, "#0FFFF0", 30, 25),
-      // new Troll(ctx, 200, 400, 900, 200, this.w, this.h, "#00FF00", 150, 50),
-      // new Elf(ctx, 75, 200, 450, 200, this.w, this.h, "#0FFFF0", 30, 25, 1)
-    ];
+    this.enemies = [];
 
     // Background
     this.background = new Background(ctx, this.w, this.h);
@@ -63,7 +63,6 @@ class FeelTheThunder {
     this.ground = new Ground(ctx, w, h);
 
     // Main character of the game
-    // this.thor = new Thor(ctx, 75, 100, 20, this.ground.groundY - 450 , this.w, this.h)
     this.thor = new Thor(
       ctx,
       110, // 55
@@ -79,8 +78,79 @@ class FeelTheThunder {
     this.currentLevel = "level1";
   }
 
+  startScreen() {
+    window.addEventListener("keydown", e => {
+      if (e.keyCode === 13) {
+        this.start();
+      }
+    });
+  }
+
+  checkDifficulty() {
+    if (this.thor.enemiesKilled <= 5) this.generateEnemysFrequency = 275
+
+    if (this.thor.enemiesKilled <= 15) this.generateEnemysFrequency = 200
+
+    if (this.thor.enemiesKilled <= 20) this.generateEnemysFrequency = 150
+
+    if (this.thor.enemiesKilled >= 30) this.generateEnemysFrequency = 75
+  }
+
+  checkBonusRestoreThorLife() {
+    if (this.thor.enemiesKilled % 20 === 0) this.thor.life = 100
+  }
+
+  start() {
+    document.querySelector('.intro').classList.add('intro--out')
+    this.soundtrack.play();
+    this.soundtrack.loop = true;
+    this.handleKeyEvents();
+    this.thor.handleKeyEvents();
+    this.thor.states.isDead = false;
+
+    this.intervalID = setInterval(() => {
+      // clearInterval(this.intervalID)
+      this.clearScreen();
+
+      if (this.thor.states.isDead) {
+        clearInterval(this.intervalID);
+        this.restartScreen();
+      }
+
+      this.framesCounter++;
+      this.thor.framesCounter++;
+
+      this.checkDifficulty()
+      this.checkBonusRestoreThorLife()
+
+      this.drawBackground();
+      this.drawGround();
+      this.generateEnemys();
+      this.drawEnemies();
+      this.drawThorInfo();
+      this.drawPowerPoints();
+      this.drawPowerUps();
+      this.detectPowerUp();
+      this.generatePowerUps();
+      this.drawLighnings();
+      this.drawScope();
+      this.drawThor();
+
+      if (this.counter % 50 === 0) this.checkEnemiesLife()
+
+      this.counter++;
+      if (this.framesCounter > 1000) this.framesCounter = 0;
+    }, 1000 / this.fps);
+  }
+
+  restartScreen() {
+    this.clearScreen();
+    alert("Press the button to restart the game");
+    window.location.reload();
+  }
+
   clearScreen() {
-    this.ctx.clearRect(0, 0, w, h);
+    this.ctx.clearRect(0, 0, this.w, this.h);
   }
 
   drawThorInfo() {
@@ -107,75 +177,78 @@ class FeelTheThunder {
   }
 
   drawPowerPoints() {
+    console.log(this.thor.powerPoints)
+    
+
+    // ---------------------------------------------
+
     this.ctx.save();
-    this.ctx.globalAlpha = this.thor.powerPoints >= 2 ? 1 : 0.5;
-    this.ctx.drawImage(this.powerPointsHammer, 20, 20);
+    this.ctx.globalAlpha = this.thor.powerPoints >= this.thor.powerPointsThrowLightning ? 1 : 0.5;
+    this.ctx.drawImage(this.powerPointsBolt, 20, 20);
     this.ctx.restore();
 
     this.ctx.save();
-    this.ctx.beginPath()
+    this.ctx.beginPath();
     this.ctx.rect(20, 100, 60, 60);
-    this.ctx.fillStyle = "#003333DD"
+    this.ctx.fillStyle = "#003333DD";
     this.ctx.strokeStyle = "#00FFFF";
     this.ctx.lineWidth = 2;
     this.ctx.stroke();
-    this.ctx.fill()
-    this.ctx.closePath()
+    this.ctx.fill();
+    this.ctx.closePath();
     this.ctx.restore();
 
-    this.ctx.beginPath()
-    this.ctx.font = "300 30px sans-serif"
-    this.ctx.fillStyle = "#00FFFF"
-    this.ctx.fillText("1", 40, 140)
-    this.ctx.closePath()
+    this.ctx.beginPath();
+    this.ctx.font = "300 30px sans-serif";
+    this.ctx.fillStyle = "#00FFFF";
+    this.ctx.fillText("1", 40, 140);
+    this.ctx.closePath();
 
     // ---------------------------------------------
 
     this.ctx.save();
-    this.ctx.globalAlpha = this.thor.powerPoints >= 3 ? 1 : 0.5;
-    this.ctx.drawImage(this.powerPointsBolt, 100, 20);
+    this.ctx.globalAlpha = this.thor.powerPoints >= this.thor.powerPointsThrowHammer ? 1 : 0.5;
+    this.ctx.drawImage(this.powerPointsHammer, 100, 20);
     this.ctx.restore();
 
     this.ctx.save();
-    this.ctx.beginPath()
+    this.ctx.beginPath();
     this.ctx.rect(100, 100, 60, 60);
-    this.ctx.fillStyle = "#003333DD"
+    this.ctx.fillStyle = "#003333DD";
     this.ctx.strokeStyle = "#00FFFF";
     this.ctx.lineWidth = 2;
     this.ctx.stroke();
-    this.ctx.fill()
-    this.ctx.closePath()
+    this.ctx.fill();
+    this.ctx.closePath();
     this.ctx.restore();
 
-    this.ctx.beginPath()
-    this.ctx.font = "300 30px sans-serif"
-    this.ctx.fillStyle = "#00FFFF"
-    this.ctx.fillText("2", 120, 140)
-    this.ctx.closePath()
-
-    // ---------------------------------------------
+    this.ctx.beginPath();
+    this.ctx.font = "300 30px sans-serif";
+    this.ctx.fillStyle = "#00FFFF";
+    this.ctx.fillText("2", 120, 140);
+    this.ctx.closePath();
 
     this.ctx.save();
-    this.ctx.globalAlpha = this.thor.powerPoints >= 4 ? 1 : 0.5;
+    this.ctx.globalAlpha = this.thor.powerPoints >= this.thor.powerPointsFeelTheThunder ? 1 : 0.5;
     this.ctx.drawImage(this.powerPointsThunder, 180, 20);
     this.ctx.restore();
 
     this.ctx.save();
-    this.ctx.beginPath()
+    this.ctx.beginPath();
     this.ctx.rect(180, 100, 60, 60);
-    this.ctx.fillStyle = "#003333DD"
+    this.ctx.fillStyle = "#003333DD";
     this.ctx.strokeStyle = "#00FFFF";
     this.ctx.lineWidth = 2;
     this.ctx.stroke();
-    this.ctx.fill()
-    this.ctx.closePath()
+    this.ctx.fill();
+    this.ctx.closePath();
     this.ctx.restore();
 
-    this.ctx.beginPath()
-    this.ctx.font = "300 30px sans-serif"
-    this.ctx.fillStyle = "#00FFFF"
-    this.ctx.fillText("3", 200, 140)
-    this.ctx.closePath()
+    this.ctx.beginPath();
+    this.ctx.font = "300 30px sans-serif";
+    this.ctx.fillStyle = "#00FFFF";
+    this.ctx.fillText("3", 200, 140);
+    this.ctx.closePath();
 
     // ---------------------------------------------
 
@@ -185,21 +258,21 @@ class FeelTheThunder {
     this.ctx.restore();
 
     this.ctx.save();
-    this.ctx.beginPath()
+    this.ctx.beginPath();
     this.ctx.rect(260, 100, 60, 60);
-    this.ctx.fillStyle = "#003333DD"
+    this.ctx.fillStyle = "#003333DD";
     this.ctx.strokeStyle = "#00FFFF";
     this.ctx.lineWidth = 2;
     this.ctx.stroke();
-    this.ctx.fill()
-    this.ctx.closePath()
+    this.ctx.fill();
+    this.ctx.closePath();
     this.ctx.restore();
 
-    this.ctx.beginPath()
-    this.ctx.font = "300 30px sans-serif"
-    this.ctx.fillStyle = "#00FFFF"
-    this.ctx.fillText("4", 280, 140)
-    this.ctx.closePath()
+    this.ctx.beginPath();
+    this.ctx.font = "300 30px sans-serif";
+    this.ctx.fillStyle = "#00FFFF";
+    this.ctx.fillText("4", 280, 140);
+    this.ctx.closePath();
   }
 
   detectPowerUp() {
@@ -227,43 +300,65 @@ class FeelTheThunder {
   }
 
   generateEnemys() {
-    if (this.counter % 75 === 0) {
-      switch (Math.floor(Math.random() * 2)) {
-        case 0:
-        case 1:
-        case 2:
-          this.enemies.push(
-            new Elf(
-              this.ctx,
-              75,
-              200,
-              Math.floor(Math.random() * this.w),
-              200,
-              this.w,
-              this.h,
-              "#0FFFF0",
-              30,
-              25
-            )
-          );
-          break;
-        case 1:
-          this.enemies.push(
-            new Troll(
-              this.ctx,
-              200,
-              400,
-              Math.floor(Math.random() * this.w),
-              200,
-              this.w,
-              this.h,
-              "#00FF00",
-              150,
-              50
-            )
-          );
-          break;
+    if (this.counter % this.generateEnemysFrequency === 0) {
+      let enemyXSpanPosition = Math.round(Math.random() * 2)
+
+      switch (enemyXSpanPosition) {
+        case 0: enemyXSpanPosition = 5; break;
+        case 1: enemyXSpanPosition = this.w - 5; break
       }
+
+      this.enemies.push(
+        new Elf(
+          this.ctx,
+          75,
+          200,
+          enemyXSpanPosition,
+          this.h - 200,
+          this.w,
+          this.h,
+          "#0FFFF0",
+          100,
+          25
+        )
+      );
+
+    //   switch (Math.floor(Math.random() * 2)) {
+    //     case 0:
+    //     case 1:
+    //     case 2:
+    //       this.enemies.push(
+    //         new Elf(
+    //           this.ctx,
+    //           75,
+    //           200,
+    //           Math.floor(Math.random() * this.w),
+    //           200,
+    //           this.w,
+    //           this.h,
+    //           "#0FFFF0",
+    //           100,
+    //           25
+    //         )
+    //       );
+    //       break;
+    //     case 1:
+    //       this.enemies.push(
+    //         new Troll(
+    //           this.ctx,
+    //           200,
+    //           400,
+    //           Math.floor(Math.random() * this.w),
+    //           200,
+    //           this.w,
+    //           this.h,
+    //           "#00FF00",
+    //           150,
+    //           50
+    //         )
+    //       );
+    //       break;
+    //   }
     }
   }
 
@@ -284,7 +379,7 @@ class FeelTheThunder {
   }
 
   generatePowerUps() {
-    if (this.counter >= 5000) {
+    if (this.counter >= 3000) {
       this.powerUps.push(
         new PowerUp(
           this.ctx,
@@ -316,17 +411,17 @@ class FeelTheThunder {
 
       if (
         e.keyCode === this.thor.keys.throwLighning &&
-        this.thor.powerPoints >= 3
+        this.thor.powerPoints >= this.thor.powerPointsThrowLightning
       ) {
-        this.thor.powerPoints -= 3;
+        this.thor.powerPoints -= this.thor.powerPointsThrowLightning;
         this.throwLighning();
       }
 
       if (
         e.keyCode === this.thor.keys.feelTheThunder &&
-        this.thor.powerPoints >= 4
+        this.thor.powerPoints >= this.thor.powerPointsFeelTheThunder
       ) {
-        this.thor.powerPoints -= 4;
+        this.thor.powerPoints -= this.thor.powerPointsFeelTheThunder;
         this.feelTheThunderAttack();
       }
 
@@ -335,37 +430,9 @@ class FeelTheThunder {
         this.thor.powerPoints >= 5
       ) {
         this.thor.powerPoints -= 5;
-        this.feelTheThunderAttack();
+        // this.feelTheThunderAttack();
       }
     });
-  }
-
-  start() {
-    this.handleKeyEvents();
-    this.thor.handleKeyEvents();
-
-    this.intervalID = setInterval(() => {
-      // clearInterval(this.intervalID)
-      this.clearScreen();
-      this.framesCounter++;
-      this.thor.framesCounter++;
-
-      this.drawBackground();
-      this.drawGround();
-      this.generateEnemys();
-      this.drawEnemies();
-      this.drawThorInfo();
-      this.drawPowerPoints();
-      this.drawPowerUps();
-      this.detectPowerUp();
-      this.generatePowerUps();
-      this.drawLighnings();
-      this.drawScope();
-      this.drawThor();
-
-      this.counter++;
-      if (this.framesCounter > 1000) this.framesCounter = 0;
-    }, 1000 / this.fps);
   }
 
   thorAttack() {
@@ -381,13 +448,24 @@ class FeelTheThunder {
 
           // this.hammerHitsAudio.play()
 
-          if (enemy.life <= 0) {
+          if (enemy.life <= 0 && !enemy.isDead) {
             this.thor.increasePowerPoints();
             this.thor.increaseScore();
-            this.enemies.splice(idx, 1);
+            enemy.isDead = true
+            // this.enemies.splice(idx, 1);
           }
         }
       });
+    }
+  }
+
+  checkEnemiesLife() {
+    if (this.enemies.length > 0) {
+      this.enemies.forEach((enemy, idx) => {
+        if (enemy.isDead) {
+          this.enemies.splice(idx, 1)
+        }
+      })
     }
   }
 
@@ -419,9 +497,9 @@ class FeelTheThunder {
         ) {
           enemy.life -= this.thor.attacks.throwLighning;
 
-          if (enemy.life <= 0) {
-            this.enemies.splice(idx, 1);
-            this.thor.points++;
+          if (enemy.life <= 0 && !enemy.isDead) {
+            // this.enemies.splice(idx, 1);
+            enemy.isDead = true
             this.thor.increasePowerPoints();
             this.thor.increaseScore();
           }
@@ -441,36 +519,15 @@ class FeelTheThunder {
 
     if (this.enemies.length > 0) {
       this.thor.enemiesKilled += this.enemies.length;
-      this.enemies = [];
-    }
-  }
-
-  thorMakesRadio() {
-    if (this.enemies.length > 0) {
-      this.enemies.forEach((enemy, idx) => {
-        if (
-          // enemy.x > this.thor.x - this.thor.radiusAttack - this.thor.w / 2 &&
-          // enemy.x < this.thor.x + this.thor.radiusAttack + this.thor.w / 2
-          (enemy.x > this.thor.x - this.thor.radiusAttack - this.thor.w / 2 &&
-            enemy.x < this.thor.x + this.thor.w) ||
-          (enemy.x < this.thor.x + this.thor.radiusAttack + this.thor.w / 2 &&
-            enemy.x > this.thor.x + this.thor.w)
-        ) {
-          enemy.life -= this.thor.attacks.radio;
-
-          if (enemy.life <= 0) {
-            this.thor.increasePowerPoints();
-            this.thor.increaseScore();
-            this.enemies.splice(idx, 1);
-          }
-        }
-      });
+      this.enemies.forEach(enemy => enemy.isDead = true)
     }
   }
 
   drawEnemies() {
     if (this.enemies.length > 0) {
       this.enemies.forEach((enemy, idx) => {
+        let enemyDied = false;
+
         if (
           this.thor.hammer &&
           this.thor.hammer.x >= enemy.x &&
@@ -480,12 +537,13 @@ class FeelTheThunder {
         ) {
           // Makes the hammer hits once (1)
           if (!enemy.states.isBeingHitted) {
-            enemy.life -= this.thor.attacks.hammer;
+            enemy.life -= this.thor.attacks.throwHammer;
             // this.flyingHammerAudio.play()
             if (enemy.life <= 0) {
               this.thor.increasePowerPoints();
               this.thor.increaseScore();
-              this.enemies.splice(idx, 1);
+              // this.enemies.splice(idx, 1);
+              enemy.isDead = true
             }
           }
 
@@ -502,7 +560,7 @@ class FeelTheThunder {
             this.thor.x <= enemy.x + enemy.w &&
             this.thor.y >= enemy.y
           ) {
-            this.thor.life -= 0.2;
+            this.thor.life -= 0.1;
           }
         }
 
@@ -512,13 +570,21 @@ class FeelTheThunder {
             this.thor.x <= enemy.x + enemy.w &&
             this.thor.y >= enemy.y
           ) {
-            this.thor.life -= 0.2;
+            this.thor.life -= 0.1;
           }
         }
 
-        if (this.thor.life <= 0) clearInterval(this.intervalID);
+        if (this.thor.life <= 0) {
+          this.thor.states.isDead = true;
+          // clearInterval(this.intervalID);
+          return;
+        }
 
-        enemy.draw(this.framesCounter);
+        if (!enemyDied) enemy.draw(this.framesCounter);
+        else
+          setTimeout(() => {
+            enemy.draw(this.framesCounter);
+          }, 1000);
       });
     }
   }

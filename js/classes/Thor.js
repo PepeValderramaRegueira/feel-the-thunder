@@ -4,6 +4,10 @@ class Thor extends GameCharacter {
 
     this.framesCounter = 0;
 
+    this.powerPointsThrowHammer = 15;
+    this.powerPointsThrowLightning = 10;
+    this.powerPointsFeelTheThunder = 20;
+
     this.enemiesKilled = 0;
     this.powerPoints = 0;
     this.jumpHeight = 40;
@@ -14,11 +18,10 @@ class Thor extends GameCharacter {
 
     // Attacks that Thor can perform
     this.attacks = {
-      hammer: 25, // No power points required
-      throwHammer: 25, // 2 power points required
-      radio: 50, // 3 power points required
-      throwLighning: 75, // 4 power points required
-      feelTheThunder: 500 // 5 power points required
+      hammer: 15, // No power points required
+      throwLighning: 100, // 10 power points required
+      throwHammer: 60, // 15 power points required
+      feelTheThunder: 500 // 20 power points required
     };
 
     // Different states for Thor
@@ -32,16 +35,17 @@ class Thor extends GameCharacter {
       isThrowingHammer: false,
       isMoving: false,
       isOverPlatform: false,
-      isTouchingGround: true
+      isTouchingGround: true,
+      isDead: false
     };
 
     this.keys = {
-      right: 68,
-      left: 65,
+      right: 39,
+      left: 37,
       jump: 32,
       attack: 81,
-      throwHummer: 49,
-      throwLighning: 50,
+      throwLighning: 49,
+      throwHummer: 50,
       feelTheThunder: 51,
       releaseTheHulk: 52
     };
@@ -106,7 +110,7 @@ class Thor extends GameCharacter {
   }
 
   increasePowerPoints() {
-    this.powerPoints < 5 ? this.powerPoints++ : null;
+    this.powerPoints < this.powerPointsFeelTheThunder ? this.powerPoints++ : null;
   }
 
   increaseScore() {
@@ -226,16 +230,16 @@ class Thor extends GameCharacter {
 
       if (e.keyCode === this.keys.attack) {
         this.states.isAttacking = true;
-        this.attack();
+        // this.attack();
       }
 
       if (
         e.keyCode === this.keys.throwHummer &&
         !this.states.isThrowingHammer &&
-        this.powerPoints >= 2
+        this.powerPoints >= this.powerPointsThrowHammer
       ) {
         this.states.isThrowingHammer = true;
-        this.powerPoints -= 2;
+        this.powerPoints -= this.powerPointsThrowHammer;
         this.hammer = new Hammer(
           this.ctx,
           this.x,

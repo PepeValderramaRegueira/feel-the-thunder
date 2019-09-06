@@ -5,8 +5,12 @@ const w = window.innerWidth;
 // const h = 900;
 const h = window.innerHeight
 
+const intro = document.querySelector('.intro')
+
 canvas.setAttribute("width", w);
 canvas.setAttribute("height", h);
 
 const feelTheThunder = new FeelTheThunder(ctx, w, h);
-feelTheThunder.start();
+// intro.classList.add('intro--out')
+feelTheThunder.startScreen()
+// feelTheThunder.start();

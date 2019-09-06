@@ -3,5 +3,6 @@ class Enemy extends GameCharacter {
     super(ctx, w, h, x, y, bgW, bgH, color, life);
 
     this.damage = damage
+    this.isDead = false
   }
 }
