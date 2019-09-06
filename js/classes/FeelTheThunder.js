@@ -98,7 +98,7 @@ class FeelTheThunder {
 
     if (this.thor.enemiesKilled >= 30) this.generateEnemysFrequency = 60
 
-    if (this.thor.enemiesKilled >= 100) this.generateEnemysFrequency = 50s
+    if (this.thor.enemiesKilled >= 100) this.generateEnemysFrequency = 50
   }
 
   checkBonusRestoreThorLife() {
