@@ -7,8 +7,12 @@ class Elf extends Enemy {
     this.golem.frames = 6;
     this.golem.frameIndex = 0;
 
-    this.enemyDies = new Image()
-    this.enemyDies.src = './assets/blue-explosion.png'
+    this.enemyDies = []
+    this.enemyDies[0] = new Image()
+    this.enemyDies[0].src = './assets/blue-explosion.png'
+
+    this.enemyDies[1] = new Image()
+    this.enemyDies[1].src = './assets/blue-explosion-2.png'
   }
 
   animateGameCharacter(framesCounter) {
@@ -27,7 +31,7 @@ class Elf extends Enemy {
       // this.ctx.translate(this.x + this.w / 2, this.y + 20)
       // this.ctx.rotate(Math.PI / 180 * Math.random() * 360)
       // this.ctx.moveTo(this.x, this.y)
-      this.ctx.drawImage(this.enemyDies, this.x, this.y)
+      this.ctx.drawImage(this.enemyDies[Math.floor(Math.random() * 2)], this.x, this.y)
       this.ctx.restore()
     } else {
       super.draw();

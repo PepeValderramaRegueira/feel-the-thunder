@@ -183,9 +183,6 @@ class FeelTheThunder {
   }
 
   drawPowerPoints() {
-    console.log(this.thor.powerPoints)
-    
-
     // ---------------------------------------------
 
     this.ctx.save();
@@ -254,30 +251,6 @@ class FeelTheThunder {
     this.ctx.font = "300 30px sans-serif";
     this.ctx.fillStyle = "#00FFFF";
     this.ctx.fillText("3", 200, 140);
-    this.ctx.closePath();
-
-    // ---------------------------------------------
-
-    this.ctx.save();
-    this.ctx.globalAlpha = this.thor.powerPoints >= 5 ? 1 : 0.5;
-    this.ctx.drawImage(this.powerPointsHulk, 260, 20);
-    this.ctx.restore();
-
-    this.ctx.save();
-    this.ctx.beginPath();
-    this.ctx.rect(260, 100, 60, 60);
-    this.ctx.fillStyle = "#003333DD";
-    this.ctx.strokeStyle = "#00FFFF";
-    this.ctx.lineWidth = 2;
-    this.ctx.stroke();
-    this.ctx.fill();
-    this.ctx.closePath();
-    this.ctx.restore();
-
-    this.ctx.beginPath();
-    this.ctx.font = "300 30px sans-serif";
-    this.ctx.fillStyle = "#00FFFF";
-    this.ctx.fillText("4", 280, 140);
     this.ctx.closePath();
   }
 
